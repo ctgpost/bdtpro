@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English for Life Competition</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            background-color: #ffffff;
+            text-align: center;
+        }
+
+        /* --- Header Section --- */
+        .header-main {
+            background-color: #d6000f; /* Red background */
+            color: #ffffff;
+            padding: 15px 0;
+        }
+
+        .header-main h1 {
+            font-family: 'Georgia', serif;
+            font-size: 2.8em;
+            margin: 0;
+            font-style: italic;
+        }
+
+        .header-main p {
+            font-size: 1.1em;
+            margin: 5px 0 0 0;
+        }
+
+        /* --- Menu Bar --- */
+        .nav-bar {
+            background-color: #b3000c; /* Slightly darker red */
+            color: #ffffff;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .hamburger-icon {
+            font-size: 1.4em;
+            cursor: pointer;
+        }
+
+        /* --- Main Content --- */
+        .content-wrapper {
+            padding: 25px 20px;
+        }
+
+        /* Competition Title Box */
+        .competition-box {
+            display: inline-block;
+            border: 3px solid #388e3c; /* Green border */
+            padding: 5px 15px;
+            margin-bottom: 20px;
+        }
+
+        .competition-title {
+            font-family: 'Georgia', serif;
+            color: #388e3c; /* Green text */
+            font-size: 1.6em;
+            font-style: italic;
+            margin: 0;
+        }
+
+        /* Group Information */
+        .group-info {
+            color: #0d47a1; /* Blue text */
+            font-weight: bold;
+            font-size: 1.2em;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        /* --- Central Logo Graphic (Recreation) --- */
+        .logo-container {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            margin: 0 auto;
+        }
+
+        /* Abstract background shapes */
+        .shape-green {
+            position: absolute;
+            top: 10px;
+            left: 0;
+            width: 200px;
+            height: 150px;
+            background-color: #4caf50;
+            border-radius: 0 100px 100px 0;
+            transform: rotate(-10deg);
+            z-index: 1;
+        }
+
+        .shape-red {
+            position: absolute;
+            bottom: 10px;
+            right: 0;
+            width: 200px;
+            height: 150px;
+            background-color: #d6000f;
+            border-radius: 100px 0 0 100px;
+            transform: rotate(-10deg);
+            z-index: 1;
+        }
+
+        /* The main circular logo */
+        .logo-circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 160px;
+            height: 160px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="50" fill="%231E90FF"/><path d="M20,50 Q50,20 80,50 T80,50" fill="none" stroke="%23fff" stroke-width="0.5"/><path d="M20,50 Q50,80 80,50 T80,50" fill="none" stroke="%23fff" stroke-width="0.5"/></svg>');
+            background-size: cover;
+            border: 8px solid #0d47a1; /* Dark blue border */
+            border-radius: 50%;
+            z-index: 2;
+
+            /* Text inside the circle */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #ffffff;
+        }
+
+        .logo-text-main {
+            font-family: 'Georgia', serif;
+            font-size: 1em;
+            font-weight: bold;
+            line-height: 1.1;
+            margin-top: 15px;
+        }
+
+        .logo-text-sub {
+            font-size: 0.7em;
+            margin-top: 5px;
+        }
+
+        /* --- Registration Button --- */
+        .button-container {
+            margin-top: 40px;
+        }
+
+        .register-button {
+            display: inline-block;
+            padding: 15px 40px;
+            font-size: 1.4em;
+            color: #ffffff;
+            /* Gradient for a 3D look */
+            background: linear-gradient(to bottom, #4caf50, #388e3c);
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            /* 3D Shadow Effect */
+            box-shadow: 0 6px #2e7d32;
+            cursor: pointer;
+            transition: all 0.1s ease;
+        }
+
+        .register-button:active {
+            box-shadow: 0 2px #2e7d32;
+            transform: translateY(4px);
+        }
+
+        /* For Bengali text */
+        .bengali-font {
+             font-family: 'Arial', sans-serif; /* You can import a Bengali font for better results */
+        }
+
+    </style>
+</head>
+<body>
+
+    <!-- Top Red Header -->
+    <header class="header-main">
+        <h1>English for Life</h1>
+        <p>‘Be brighter than the brightest’</p>
+    </header>
+
+    <!-- Navigation Menu -->
+    <nav class="nav-bar">
+        <div>Menu</div>
+        <div class="hamburger-icon">☰</div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <div class="content-wrapper">
+
+        <!-- Competition Title -->
+        <div class="competition-box">
+            <h2 class="competition-title">English Language Competition</h2>
+        </div>
+
+        <!-- Group Categories -->
+        <div class="group-info">
+            <p>Group-A: SSC/Dakhil</p>
+            <p>Group-B: HSC/Alim</p>
+        </div>
+
+        <!-- Central Graphic (CSS Recreation) -->
+        <div class="logo-container">
+            <div class="shape-green"></div>
+            <div class="shape-red"></div>
+            <div class="logo-circle">
+                <div class="logo-text-main">English for Life</div>
+                <div class="logo-text-sub">Be brighter than the brightest</div>
+            </div>
+        </div>
+
+        <!-- Registration Button -->
+        <div class="button-container">
+            <a href="#" class="register-button">
+                <span class="bengali-font">রেজিস্ট্রেশনের জন্য এখানে ক্লিক কর</span>
+            </a>
+        </div>
+
+    </div>
+
+</body>
+</html>

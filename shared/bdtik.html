@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BD TicketPro - Travel Agency Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;700&family=Montserrat:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* Luxury Color Palette */
+        :root {
+            --luxury-gold: #d4af37;
+            --bronze: #cd7f32;
+            --pearl: #f8f6f0;
+            --cream-start: #fefdf9;
+            --cream-end: #7d5017;
+            --background: hsl(45, 100%, 96%);
+            --foreground: hsl(30, 15%, 15%);
+            --primary: hsl(40, 45%, 35%);
+            --secondary: hsl(42, 30%, 92%);
+            --accent: hsl(38, 35%, 88%);
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--background);
+            color: var(--foreground);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Oswald', sans-serif;
+        }
+
+        /* Glass-morphism Card */
+        .glass-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        /* Velvet Button */
+        .velvet-button {
+            background: linear-gradient(to bottom, var(--luxury-gold), var(--bronze));
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.375rem;
+            transition: all 0.3s ease;
+        }
+
+        .velvet-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .velvet-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        /* CSS Keyframe Animations */
+        @keyframes glow {
+            0%, 100% { box-shadow: 0 0 5px var(--luxury-gold); }
+            50% { box-shadow: 0 0 20px var(--luxury-gold); }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .glow { animation: glow 2s ease-in-out infinite; }
+        .float { animation: float 3s ease-in-out infinite; }
+        .pulse { animation: pulse 1.5s ease-in-out infinite; }
+
+        /* Desktop Dropdown Menu */
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            background: var(--primary);
+            min-width: 160px;
+            z-index: 10;
+            border-radius: 0.25rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .dropdown-menu a {
+            color: white;
+            padding: 0.5rem 1rem;
+            display: block;
+            font-size: 0.875rem;
+        }
+
+        .dropdown-menu a:hover {
+            background: var(--bronze);
+        }
+
+        /* Hamburger Menu for Mobile */
+        .hamburger {
+            display: none;
+        }
+
+        .nav-menu {
+            transition: transform 0.3s ease-in-out;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 15;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .hamburger {
+                display: block;
+                z-index: 30;
+            }
+
+            .nav-menu {
+                display: none;
+                position: fixed;
+                top: 0;
+                right: 0;
+                height: 100vh;
+                width: 75%;
+                max-width: 300px;
+                min-width: 200px;
+                background: var(--primary);
+                transform: translateX(100%);
+                z-index: 20;
+                padding: 2rem 1rem;
+                flex-direction: column;
+                overflow-y: auto;
+            }
+
+            .nav-menu.active {
+                display: flex;
+                transform: translateX(0);
+            }
+
+            .nav-menu li {
+                margin: 0.75rem 0;
+            }
+
+            .dropdown-menu {
+                display: none;
+                position: static;
+                background: var(--bronze);
+                width: 100%;
+                margin-top: 0.5rem;
+                border-radius: 0.25rem;
+            }
+
+            .dropdown-menu.active {
+                display: block;
+            }
+
+            .close-btn {
+                position: absolute;
+                top: 1rem;
+                right: 1rem;
+                color: white;
+                font-size: 1.75rem;
+                cursor: pointer;
+                line-height: 1;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-menu {
+                width: 85%;
+                max-width: 250px;
+            }
+
+            .close-btn {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="py-6 text-center bg-gradient-to-b from-[var(--cream-start)] to-[var(--cream-end)]">
+        <h1 class="text-5xl sm:text-6xl md:text-7xl text-[var(--luxury-gold)]">BD TicketPro</h1>
+        <p class="text-xl sm:text-2xl mt-2 text-[var(--foreground)]">Your Premier Travel Agency Management System</p>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-[var(--primary)] py-3 sticky top-0 z-10">
+        <div class="container mx-auto px-4 flex items-center">
+            <ul class="nav-menu flex flex-wrap justify-center space-x-2 md:space-x-6 md:flex flex-1">
+                <li class="relative dropdown">
+                    <a href="#" class="text-white font-bold text-sm hover:text-[var(--accent)]">Dashboard</a>
+                    <div class="dropdown-menu mt-2">
+                        <a href="#">Overview</a>
+                        <a href="#">Metrics</a>
+                    </div>
+                </li>
+                <li class="relative dropdown">
+                    <a href="#" class="text-white font-bold text-sm hover:text-[var(--accent)]">Country Management</a>
+                    <div class="dropdown-menu mt-2">
+                        <a href="#">Countries</a>
+                        <a href="#">Availability</a>
+                    </div>
+                </li>
+                <li class="relative dropdown">
+                    <a href="#" class="text-white font-bold text-sm hover:text-[var(--accent)]">Ticket Management</a>
+                    <div class="dropdown-menu mt-2">
+                        <a href="#">Inventory</a>
+                        <a href="#">Status</a>
+                    </div>
+                </li>
+                <li class="relative dropdown">
+                    <a href="#" class="text-white font-bold text-sm hover:text-[var(--accent)]">Booking System</a>
+                    <div class="dropdown-menu mt-2">
+                        <a href="#">Create Booking</a>
+                        <a href="#">History</a>
+                    </div>
+                </li>
+                <li class="relative dropdown">
+                    <a href="#" class="text-white font-bold text-sm hover:text-[var(--accent)]">Admin Buying</a>
+                    <div class="dropdown-menu mt-2">
+                        <a href="#">Batches</a>
+                        <a href="#">Profit Reports</a>
+                    </div>
+                </li>
+                <li class="relative dropdown">
+                    <a href="#" class="text-white font-bold text-sm hover:text-[var(--accent)]">Umrah Management</a>
+                    <div class="dropdown-menu mt-2">
+                        <a href="#">Packages</a>
+                        <a href="#">Group Tickets</a>
+                    </div>
+                </li>
+                <li class="relative dropdown">
+                    <a href="#" class="text-white font-bold text-sm hover:text-[var(--accent)]">Reporting</a>
+                    <div class="dropdown-menu mt-2">
+                        <a href="#">Sales Reports</a>
+                        <a href="#">Analytics</a>
+                    </div>
+                </li>
+                <li class="relative dropdown">
+                    <a href="#" class="text-white font-bold text-sm hover:text-[var(--accent)]">User Management</a>
+                    <div class="dropdown-menu mt-2">
+                        <a href="#">Roles</a>
+                        <a href="#">Profiles</a>
+                    </div>
+                </li>
+            </ul>
+            <button class="hamburger md:hidden text-white focus:outline-none ml-auto">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+            <div class="close-btn md:hidden hidden">&times;</div>
+        </div>
+        <div class="overlay"></div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="py-10 px-4 flex flex-col items-center">
+        <!-- Dashboard -->
+        <section class="glass-card max-w-md sm:max-w-4xl w-full text-center p-6 mb-8 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl text-[var(--primary)] mb-4">Dashboard</h2>
+            <p class="text-base sm:text-lg">Real-time business metrics, sales overview, inventory status, and quick access to key functions.</p>
+            <a href="#" class="velvet-button mt-4 inline-block pulse">Explore Dashboard</a>
+        </section>
+
+        <!-- Country Management -->
+        <section class="glass-card max-w-md sm:max-w-4xl w-full text-center p-6 mb-8 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl text-[var(--primary)] mb-4">Country Management</h2>
+            <p class="text-base sm:text-lg">View destination countries with flag icons, track ticket availability, and navigate inventories.</p>
+            <a href="#" class="velvet-button mt-4 inline-block glow">View Countries</a>
+        </section>
+
+        <!-- Ticket Management -->
+        <section class="glass-card max-w-md sm:max-w-4xl w-full text-center p-6 mb-8 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl text-[var(--primary)] mb-4">Ticket Management</h2>
+            <p class="text-base sm:text-lg">Comprehensive ticket inventory with filter, search, and status tracking (available, booked, locked, sold).</p>
+            <a href="#" class="velvet-button mt-4 inline-block pulse">Manage Tickets</a>
+        </section>
+
+        <!-- Booking System -->
+        <section class="glass-card max-w-md sm:max-w-4xl w-full text-center p-6 mb-8 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl text-[var(--primary)] mb-4">Booking System</h2>
+            <p class="text-base sm:text-lg">Create and manage bookings, process payments, and track booking status and history.</p>
+            <a href="#" class="velvet-button mt-4 inline-block glow">Create Booking</a>
+        </section>
+
+        <!-- Admin Buying Interface -->
+        <section class="glass-card max-w-md sm:max-w-4xl w-full text-center p-6 mb-8 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl text-[var(--primary)] mb-4">Admin Buying Interface</h2>
+            <p class="text-base sm:text-lg">Manage ticket batches, track buying prices, and generate profit reports (Admin only).</p>
+            <a href="#" class="velvet-button mt-4 inline-block pulse">Admin Access</a>
+        </section>
+
+        <!-- Umrah Management -->
+        <section class="glass-card max-w-md sm:max-w-4xl w-full text-center p-6 mb-8 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl text-[var(--primary)] mb-4">Umrah Management</h2>
+            <p class="text-base sm:text-lg">Specialized management for Umrah packages, group tickets, and pricing details.</p>
+            <a href="#" class="velvet-button mt-4 inline-block glow">Manage Umrah</a>
+        </section>
+
+        <!-- Reporting -->
+        <section class="glass-card max-w-md sm:max-w-4xl w-full text-center p-6 mb-8 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl text-[var(--primary)] mb-4">Reporting</h2>
+            <p class="text-base sm:text-lg">Generate sales reports, profit analysis, inventory tracking, and performance metrics.</p>
+            <a href="#" class="velvet-button mt-4 inline-block pulse">View Reports</a>
+        </section>
+
+        <!-- User Management -->
+        <section class="glass-card max-w-md sm:max-w-4xl w-full text-center p-6 mb-8 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl text-[var(--primary)] mb-4">User Management</h2>
+            <p class="text-base sm:text-lg">Manage user roles (Admin, Manager, Staff), authentication, and profiles.</p>
+            <a href="#" class="velvet-button mt-4 inline-block glow">Manage Users</a>
+        </section>
+
+        <!-- Login Placeholder -->
+        <section class="glass-card max-w-md sm:max-w-4xl w-full text-center p-6 mb-8 rounded-lg">
+            <h2 class="text-2xl sm:text-3xl text-[var(--primary)] mb-4">Login</h2>
+            <p class="text-base sm:text-lg">Secure JWT-based authentication for Admin, Manager, and Staff roles.</p>
+            <a href="#" class="velvet-button mt-4 inline-block pulse">Login</a>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-[var(--secondary)] py-6 border-t">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm">
+            <div>Copyright © 2025 BD TicketPro. All rights reserved.</div>
+            <div class="mt-2 md:mt-0">Designed with luxury by BD TicketPro Team</div>
+        </div>
+        <a href="#" class="fixed bottom-4 right-4 bg-[var(--primary)] text-white w-10 h-10 flex items-center justify-center rounded-full glow">^</a>
+    </footer>
+
+    <script>
+        // Hamburger Menu Toggle
+        const hamburger = document.querySelector('.hamburger');
+        const closeBtn = document.querySelector('.close-btn');
+        const navMenu = document.querySelector('.nav-menu');
+        const overlay = document.querySelector('.overlay');
+
+        hamburger.addEventListener('click', () => {
+            navMenu.classList.add('active');
+            overlay.classList.add('active');
+            hamburger.style.display = 'none';
+            closeBtn.style.display = 'block';
+        });
+
+        closeBtn.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburger.style.display = 'block';
+            closeBtn.style.display = 'none';
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.remove('active');
+            });
+        });
+
+        // Mobile Dropdown Toggle
+        const dropdowns = document.querySelectorAll('.dropdown');
+        dropdowns.forEach(dropdown => {
+            const link = dropdown.querySelector('a');
+            link.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768) {
+                    e.preventDefault();
+                    const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+                    const isActive = dropdownMenu.classList.contains('active');
+                    document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                        menu.classList.remove('active');
+                    });
+                    if (!isActive) {
+                        dropdownMenu.classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // Close mobile menu and dropdowns when clicking a dropdown item
+        navMenu.querySelectorAll('.dropdown-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                overlay.classList.remove('active');
+                hamburger.style.display = 'block';
+                closeBtn.style.display = 'none';
+                document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                    menu.classList.remove('active');
+                });
+            });
+        });
+
+        // Close menu and dropdowns when clicking overlay
+        overlay.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            overlay.classList.remove('active');
+            hamburger.style.display = 'block';
+            closeBtn.style.display = 'none';
+            document.querySelectorAll('.dropdown-menu').forEach(menu => {
+                menu.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+</html>
