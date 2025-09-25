@@ -1,133 +1,75 @@
-# BD TicketPro - PostgreSQL Version
+# BDTPro - Bangladesh Travel Agency Management System
 
-A comprehensive travel agency management system for Bangladeshi travel agencies, now using PostgreSQL as the database backend.
+BDTPro is a comprehensive travel agency management system built with modern web technologies. It allows travel agencies to manage their operations including ticket bookings, customer management, and travel packages.
 
 ## Features
 
-- **Dashboard**: Real-time business metrics and analytics
-- **Country Management**: View all destination countries with flag icons
-- **Ticket Management**: Comprehensive ticket inventory system
-- **Booking System**: Create and manage customer bookings
-- **Admin Buying Interface**: Manage ticket batches and inventory
-- **Umrah Management**: Specialized management for Umrah packages
-- **Reporting**: Sales reports and analytics
-- **User Management**: Role-based access control (admin, manager, staff)
+- User authentication and authorization
+- Ticket booking management
+- Customer information management
+- Travel package listings
+- Admin dashboard
+- Responsive design for all devices
 
-## Technology Stack
+## Tech Stack
 
-### Frontend
-- React 18 with TypeScript
-- Vite for fast development and production builds
-- Tailwind CSS with custom luxury theme
-- shadcn/ui components with Radix UI primitives
-- React Query for server state management
-- React Router for client-side navigation
-- Framer Motion for animations
+- **Frontend**: React with TypeScript
+- **Backend**: Node.js with Express
+- **Database**: PostgreSQL
+- **Deployment**: Vercel
+- **Build Tool**: Vite
 
-### Backend
-- Node.js with Express.js
-- PostgreSQL database with node-postgres (pg) driver
-- JWT-based authentication system
-- Zod for request validation
+## Getting Started
 
-## Prerequisites
+### Prerequisites
 
-- Node.js 20.x
-- PostgreSQL 13+
+- Node.js (v14 or higher)
+- PostgreSQL database
 - npm or yarn package manager
 
-## Installation
+### Installation
 
-1. Clone the repository:
-   ```bash
-   git clone <repository-url>
-   cd BD-TicketPro-PostgreSQL
-   ```
-
+1. Clone the repository
 2. Install dependencies:
    ```bash
    npm install
    ```
 
 3. Set up environment variables:
-   Create a `.env` file in the root directory:
+   Create a `.env` file based on `.env.example`:
    ```env
-   # Option 1: Using DATABASE_URL (for platforms like Render, Heroku)
-   DATABASE_URL=your_database_connection_string
-   JWT_SECRET=your_jwt_secret_key
-   
-   # Option 2: Using individual database variables
-   DB_USER=your_postgres_username
+   # Server Configuration
+   NODE_ENV=development
+   PORT=8080
+
+   # JWT Configuration
+   JWT_SECRET=your-super-secret-jwt-key-here-change-this-in-production-please
+   JWT_EXPIRES_IN=7d
+
+   # Database Configuration
+   DB_USER=postgres
    DB_HOST=localhost
    DB_NAME=bd_ticketpro
-   DB_PASSWORD=your_postgres_password
+   DB_PASSWORD=your_postgres_password_here
    DB_PORT=5432
-   JWT_SECRET=your_jwt_secret_key
+
+   # CORS Configuration
+   ALLOWED_ORIGINS=http://localhost:8080
    ```
 
-4. Create the PostgreSQL database:
-   ```sql
-   CREATE DATABASE bd_ticketpro;
-   ```
-
-5. Start the development server:
+4. Run the development server:
    ```bash
    npm run dev
    ```
 
-6. Access the application at: `http://localhost:8080`
-
-## Demo Credentials
-
-- **Admin**: username: `admin`, password: `admin123`
-- **Manager**: username: `manager`, password: `manager123`
-- **Staff**: username: `staff`, password: `staff123`
-
-## Build for Production
-
-1. Build the application:
-   ```bash
-   npm run build
-   ```
-
-2. Start the production server:
-   ```bash
-   npm run start
-   ```
-
 ## Deployment
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed deployment instructions.
-
-## Key Differences from SQLite Version
-
-1. **Database**: Uses PostgreSQL instead of SQLite for better scalability
-2. **Connection**: Uses connection pooling for better performance
-3. **Data Types**: Uses PostgreSQL-specific data types (UUID, JSONB, TIMESTAMPTZ)
-4. **Indexing**: Added database indexes for better query performance
-5. **Async Operations**: All database operations are now properly asynchronous
-
-## Database Schema
-
-The application uses the following tables:
-- `users`: User accounts and roles
-- `countries`: Destination countries
-- `airlines`: Airline information
-- `ticket_batches`: Groups of tickets from the same supplier
-- `tickets`: Individual tickets
-- `bookings`: Customer bookings
-- `umrah_groups`: Umrah package groups
-- `umrah_group_tickets`: Individual tickets within Umrah packages
-- `activity_logs`: User activity tracking
+This project is configured for deployment on Vercel. Simply connect your GitHub repository to Vercel for automatic deployments.
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a pull request
+Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## License
 
-This project is proprietary software for BD TicketPro.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
