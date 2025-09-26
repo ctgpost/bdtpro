@@ -167,7 +167,7 @@ const App = () => (
                 {/* Root redirect */}
                 <Route
                   path="/"
-                  element={<Navigate to="/dashboard" replace />}
+                  element={<Navigate to="/login" replace />}
                 />
 
                 {/* 404 */}
