@@ -230,10 +230,107 @@ export async function initializeDatabase() {
     await query(`CREATE INDEX IF NOT EXISTS idx_activity_logs_user_id ON activity_logs(user_id)`);
     await query(`CREATE INDEX IF NOT EXISTS idx_activity_logs_created_at ON activity_logs(created_at)`);
 
+    // Create default users if they don't exist
+    await createDefaultUsers();
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);
     throw error;
+  }
+}
+
+// Create default users if they don't exist
+async function createDefaultUsers() {
+  try {
+    // Check if admin user exists
+    const adminUser = await query(
+      "SELECT * FROM users WHERE username = $1",
+      ["admin"]
+    );
+    
+    if (adminUser.rows.length === 0) {
+      // Create default admin user
+      const adminId = uuidv4();
+      const adminPasswordHash = await bcrypt.hash("admin123", 10);
+      
+      await query(
+        `INSERT INTO users (id, username, password_hash, name, email, phone, role, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [
+          adminId,
+          "admin",
+          adminPasswordHash,
+          "Admin User",
+          "admin@example.com",
+          "+1234567890",
+          "admin",
+          "active"
+        ]
+      );
+      
+      console.log("Default admin user created (username: admin, password: admin123)");
+    }
+
+    // Check if manager user exists
+    const managerUser = await query(
+      "SELECT * FROM users WHERE username = $1",
+      ["manager"]
+    );
+    
+    if (managerUser.rows.length === 0) {
+      // Create default manager user
+      const managerId = uuidv4();
+      const managerPasswordHash = await bcrypt.hash("manager123", 10);
+      
+      await query(
+        `INSERT INTO users (id, username, password_hash, name, email, phone, role, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [
+          managerId,
+          "manager",
+          managerPasswordHash,
+          "Manager User",
+          "manager@example.com",
+          "+1234567891",
+          "manager",
+          "active"
+        ]
+      );
+      
+      console.log("Default manager user created (username: manager, password: manager123)");
+    }
+
+    // Check if staff user exists
+    const staffUser = await query(
+      "SELECT * FROM users WHERE username = $1",
+      ["staff"]
+    );
+    
+    if (staffUser.rows.length === 0) {
+      // Create default staff user
+      const staffId = uuidv4();
+      const staffPasswordHash = await bcrypt.hash("staff123", 10);
+      
+      await query(
+        `INSERT INTO users (id, username, password_hash, name, email, phone, role, status)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        [
+          staffId,
+          "staff",
+          staffPasswordHash,
+          "Staff User",
+          "staff@example.com",
+          "+1234567892",
+          "staff",
+          "active"
+        ]
+      );
+      
+      console.log("Default staff user created (username: staff, password: staff123)");
+    }
+  } catch (error) {
+    console.error("Error creating default users:", error);
   }
 }
 
