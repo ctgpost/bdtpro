@@ -201,7 +201,7 @@ export default function Bookings() {
       );
       console.log("বুকিং আইডি / Booking ID:", bookingId);
       console.log("যাত্রীর নাম / Passenger Name:", booking.passengerInfo?.name);
-      console.log("পূর্বের স্ট্যটাস / Previous Status:", currentStatus);
+      console.log("পূর্বের স্ট্যাটাস / Previous Status:", currentStatus);
       console.log("নতুন স্ট্যাটাস / New Status:", newStatus);
       console.log("ব্যবহারকারী / User:", user?.name);
       console.log("সময় / Time:", new Date().toLocaleString());
@@ -500,20 +500,20 @@ export default function Bookings() {
                           <User className="h-4 w-4 text-foreground/50" />
                           <div>
                             <div className="font-medium font-body">
-                              {booking.passengerInfo.name}
+                              {booking.customer_name}
                             </div>
                             <div className="text-xs text-foreground/50 font-body">
-                              {booking.passengerInfo.passportNo}
+                              {booking.passport_number || "N/A"}
                             </div>
                           </div>
                         </div>
                       </TableCell>
                       <TableCell>
                         <div className="font-body">
-                          {booking.agentInfo.name}
+                          {booking.agent_name}
                         </div>
                         <div className="text-xs text-foreground/50 font-body">
-                          {booking.agentInfo.phone}
+                          {booking.customer_phone}
                         </div>
                       </TableCell>
                       <TableCell>
@@ -536,17 +536,17 @@ export default function Bookings() {
                         <Badge
                           className={`${
                             paymentColors[
-                              booking.paymentType as keyof typeof paymentColors
+                              (booking.amount_paid >= booking.total_amount ? "full" : "partial") as keyof typeof paymentColors
                             ]
                           } font-body`}
                         >
-                          {booking.paymentType === "full"
+                          {booking.amount_paid >= booking.total_amount
                             ? "Full Payment"
                             : "Partial Payment"}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-sm text-foreground/70 font-body">
-                        {new Date(booking.createdAt).toLocaleDateString()}
+                        {new Date(booking.created_at).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center space-x-2">
@@ -580,22 +580,19 @@ export default function Bookings() {
                                       <div className="text-sm space-y-1 font-body">
                                         <p>
                                           <strong>Name:</strong>{" "}
-                                          {selectedBooking.passengerInfo.name}
+                                          {selectedBooking.customer_name}
                                         </p>
                                         <p>
                                           <strong>Passport:</strong>{" "}
-                                          {
-                                            selectedBooking.passengerInfo
-                                              .passportNo
-                                          }
+                                          {selectedBooking.passport_number || "N/A"}
                                         </p>
                                         <p>
                                           <strong>Phone:</strong>{" "}
-                                          {selectedBooking.passengerInfo.phone}
+                                          {selectedBooking.customer_phone}
                                         </p>
                                         <p>
                                           <strong>Email:</strong>{" "}
-                                          {selectedBooking.passengerInfo.email}
+                                          {selectedBooking.customer_email}
                                         </p>
                                       </div>
                                     </div>
@@ -606,15 +603,15 @@ export default function Bookings() {
                                       <div className="text-sm space-y-1 font-body">
                                         <p>
                                           <strong>Name:</strong>{" "}
-                                          {selectedBooking.agentInfo.name}
+                                          {selectedBooking.agent_name}
                                         </p>
                                         <p>
                                           <strong>Phone:</strong>{" "}
-                                          {selectedBooking.agentInfo.phone}
+                                          {selectedBooking.agent_phone || selectedBooking.customer_phone}
                                         </p>
                                         <p>
                                           <strong>Email:</strong>{" "}
-                                          {selectedBooking.agentInfo.email}
+                                          {selectedBooking.agent_email || selectedBooking.customer_email}
                                         </p>
                                       </div>
                                     </div>

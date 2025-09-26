@@ -401,44 +401,155 @@ export class APIClient {
     };
   }
 
-  // Bookings methods
-  async getBookings() {
+  // Booking Management API functions
+  async getBookings(): Promise<any[]> {
+    // Simulate API delay
     await delay(300);
-    return DEMO_BOOKINGS;
+    
+    // Return demo data
+    return [
+      {
+        id: "1",
+        ticket_id: "SA001",
+        customer_name: "Md. Rahman",
+        customer_email: "rahman@example.com",
+        customer_phone: "+8801712345678",
+        country_code: "SA",
+        ticket_type: "Economy",
+        departure_date: "2025-10-15",
+        return_date: "2025-10-25",
+        total_amount: 85000,
+        amount_paid: 85000,
+        status: "confirmed",
+        agent_id: "agent001",
+        agent_name: "Travel Agent 1",
+        notes: "Full payment received",
+        created_at: "2025-09-20T10:30:00Z",
+        updated_at: "2025-09-20T10:30:00Z"
+      },
+      {
+        id: "2",
+        ticket_id: "SA002",
+        customer_name: "Fatema Begum",
+        customer_email: "fatema@example.com",
+        customer_phone: "+8801987654321",
+        country_code: "SA",
+        ticket_type: "Business",
+        departure_date: "2025-10-18",
+        return_date: "2025-10-28",
+        total_amount: 150000,
+        amount_paid: 75000,
+        status: "pending",
+        agent_id: "agent002",
+        agent_name: "Travel Agent 2",
+        notes: "50% advance payment received",
+        created_at: "2025-09-22T14:15:00Z",
+        updated_at: "2025-09-22T14:15:00Z"
+      },
+      {
+        id: "3",
+        ticket_id: "AE001",
+        customer_name: "Ahmed Hossain",
+        customer_email: "ahmed@example.com",
+        customer_phone: "+8801612345678",
+        country_code: "AE",
+        ticket_type: "Economy",
+        departure_date: "2025-11-05",
+        return_date: "2025-11-15",
+        total_amount: 75000,
+        amount_paid: 0,
+        status: "pending",
+        agent_id: "agent001",
+        agent_name: "Travel Agent 1",
+        notes: "Booking confirmed, payment pending",
+        created_at: "2025-09-25T09:45:00Z",
+        updated_at: "2025-09-25T09:45:00Z"
+      },
+      {
+        id: "4",
+        ticket_id: "SA003",
+        customer_name: "Tasnim Khan",
+        customer_email: "tasnim@example.com",
+        customer_phone: "+8801555555555",
+        country_code: "SA",
+        ticket_type: "First Class",
+        departure_date: "2025-09-10",
+        return_date: "2025-09-20",
+        total_amount: 200000,
+        amount_paid: 200000,
+        status: "cancelled",
+        agent_id: "agent003",
+        agent_name: "Travel Agent 3",
+        notes: "Customer cancelled due to personal reasons",
+        created_at: "2025-09-01T11:20:00Z",
+        updated_at: "2025-09-15T16:30:00Z"
+      }
+    ];
   }
 
-  async createBooking(bookingData: any) {
+  async getBookingById(id: string): Promise<any> {
+    // Simulate API delay
+    await delay(300);
+    
+    // Return demo data for a specific booking
+    const bookings = await this.getBookings();
+    const booking = bookings.find(b => b.id === id);
+    
+    if (!booking) {
+      throw new Error("Booking not found");
+    }
+    
+    return booking;
+  }
+
+  async createBooking(data: any): Promise<any> {
+    // Simulate API delay
     await delay(500);
+    
+    // Return created booking with ID and timestamps
     return {
-      success: true,
-      message: "Booking created successfully",
-      data: {
-        id: "BK" + (DEMO_BOOKINGS.length + 1).toString().padStart(3, "0"),
-        ...bookingData,
-        status: "confirmed"
-      }
+      id: Math.random().toString(36).substring(2, 9),
+      ...data,
+      status: "pending",
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
     };
   }
 
-  async updateBookingStatus(id: string, status: string): Promise<void> {
-    const result = await this.request(`/bookings/${id}/status`, {
-      method: "PATCH",
-      body: JSON.stringify({ status }),
-    });
-
-    if (!result.success) {
-      throw new Error(result.message || "Failed to update booking status");
-    }
+  async updateBooking(id: string, data: any): Promise<any> {
+    // Simulate API delay
+    await delay(500);
+    
+    // Return updated booking
+    return {
+      id,
+      ...data,
+      updated_at: new Date().toISOString()
+    };
   }
 
-  async cancelBooking(id: string): Promise<void> {
-    const result = await this.request(`/bookings/${id}`, {
-      method: "DELETE",
-    });
+  async updateBookingStatus(id: string, status: string): Promise<any> {
+    // Simulate API delay
+    await delay(500);
+    
+    // Return booking with updated status
+    return {
+      id,
+      status,
+      updated_at: new Date().toISOString()
+    };
+  }
 
-    if (!result.success) {
-      throw new Error(result.message || "Failed to cancel booking");
-    }
+  async cancelBooking(id: string): Promise<any> {
+    // Simulate API delay
+    await delay(500);
+    
+    // Return booking with cancelled status
+    return {
+      id,
+      status: "cancelled",
+      updated_at: new Date().toISOString()
+    };
   }
 
   // User management methods
@@ -589,27 +700,63 @@ export class APIClient {
   }
 
   // Umrah With Transport methods
-  async getUmrahWithTransport(search?: string): Promise<any> {
-    const params = search ? `?search=${encodeURIComponent(search)}` : "";
-    const result = await this.request<any>(`/umrah/with-transport${params}`);
-
-    if (result.success && result.data) {
-      return result.data;
+  private DEMO_UMRAH_WITH_TRANSPORT = [
+    {
+      id: "1",
+      passenger_name: "Md. Abdullah Al Mamun",
+      pnr: "ABC123XYZ",
+      passport_number: "P12345678",
+      flight_airline_name: "Saudi Airlines",
+      departure_date: "2025-10-15",
+      return_date: "2025-10-25",
+      approved_by: "Travel Agency",
+      reference_agency: "Dhaka Travel",
+      emergency_flight_contact: "+8801712345678",
+      passenger_mobile: "+8801987654321",
+      created_at: "2025-09-20T10:30:00Z",
+      updated_at: "2025-09-20T10:30:00Z"
+    },
+    {
+      id: "2",
+      passenger_name: "Fatema Begum",
+      pnr: "DEF456UVW",
+      passport_number: "P87654321",
+      flight_airline_name: "Emirates",
+      departure_date: "2025-11-05",
+      return_date: "2025-11-15",
+      approved_by: "Travel Agency",
+      reference_agency: "Chittagong Tours",
+      emergency_flight_contact: "+8801612345678",
+      passenger_mobile: "+8801876543210",
+      created_at: "2025-09-18T14:15:00Z",
+      updated_at: "2025-09-18T14:15:00Z"
     }
-    throw new Error(
-      result.message || "Failed to get umrah with transport packages",
-    );
+  ];
+
+  async getUmrahWithTransport(search?: string): Promise<any> {
+    await delay(300);
+    
+    // Filter demo data based on search term
+    if (search) {
+      const searchLower = search.toLowerCase();
+      return this.DEMO_UMRAH_WITH_TRANSPORT.filter(pkg => 
+        pkg.passenger_name.toLowerCase().includes(searchLower) ||
+        pkg.pnr.toLowerCase().includes(searchLower) ||
+        pkg.passport_number.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    return this.DEMO_UMRAH_WITH_TRANSPORT;
   }
 
   async getUmrahWithTransportById(id: string): Promise<any> {
-    const result = await this.request<any>(`/umrah/with-transport/${id}`);
-
-    if (result.success && result.data) {
-      return result.data;
+    await delay(300);
+    const packageData = this.DEMO_UMRAH_WITH_TRANSPORT.find(pkg => pkg.id === id);
+    
+    if (packageData) {
+      return packageData;
     }
-    throw new Error(
-      result.message || "Failed to get umrah with transport package",
-    );
+    throw new Error("Package not found");
   }
 
   async createUmrahWithTransport(packageData: {
@@ -623,78 +770,105 @@ export class APIClient {
     reference_agency: string;
     emergency_flight_contact: string;
     passenger_mobile: string;
-    group_ticket_id?: string; // For auto-deduction from group tickets
+    group_ticket_id?: string;
   }): Promise<any> {
-    const result = await this.request<any>("/umrah/with-transport", {
-      method: "POST",
-      body: JSON.stringify(packageData),
-    });
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(
-      result.message || "Failed to create umrah with transport package",
-    );
+    await delay(500);
+    
+    const newPackage = {
+      id: `UMRAH-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      ...packageData,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    // Add to demo data array
+    this.DEMO_UMRAH_WITH_TRANSPORT.push(newPackage);
+    
+    return newPackage;
   }
 
   async updateUmrahWithTransport(id: string, packageData: any): Promise<any> {
-    const result = await this.request<any>(`/umrah/with-transport/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(packageData),
-    });
-
-    if (result.success && result.data) {
-      return result.data;
+    await delay(500);
+    
+    const index = this.DEMO_UMRAH_WITH_TRANSPORT.findIndex(pkg => pkg.id === id);
+    
+    if (index !== -1) {
+      const updatedPackage = {
+        ...this.DEMO_UMRAH_WITH_TRANSPORT[index],
+        ...packageData,
+        updated_at: new Date().toISOString()
+      };
+      
+      this.DEMO_UMRAH_WITH_TRANSPORT[index] = updatedPackage;
+      return updatedPackage;
     }
-    throw new Error(
-      result.message || "Failed to update umrah with transport package",
-    );
+    
+    throw new Error("Package not found");
   }
 
   async deleteUmrahWithTransport(id: string): Promise<void> {
-    const result = await this.request<any>(`/umrah/with-transport/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!result.success) {
-      throw new Error(
-        result.message || "Failed to delete umrah with transport package",
-      );
+    await delay(300);
+    
+    const initialLength = this.DEMO_UMRAH_WITH_TRANSPORT.length;
+    this.DEMO_UMRAH_WITH_TRANSPORT = this.DEMO_UMRAH_WITH_TRANSPORT.filter(pkg => pkg.id !== id);
+    
+    if (this.DEMO_UMRAH_WITH_TRANSPORT.length === initialLength) {
+      throw new Error("Package not found");
     }
   }
 
   // Umrah Without Transport methods
+  private DEMO_UMRAH_WITHOUT_TRANSPORT = [
+    {
+      id: "1",
+      flight_departure_date: "2025-10-20",
+      return_date: "2025-10-30",
+      passenger_name: "Ahmed Hossain",
+      passport_number: "P11223344",
+      entry_recorded_by: "Staff User",
+      total_amount: 85000,
+      amount_paid: 50000,
+      remaining_amount: 35000,
+      last_payment_date: "2025-09-25",
+      remarks: "Partial payment received",
+      created_at: "2025-09-15T09:45:00Z",
+      updated_at: "2025-09-25T11:20:00Z"
+    }
+  ];
+
   async getUmrahWithoutTransport(
     search?: string,
     pendingOnly?: boolean,
   ): Promise<any> {
-    const params = new URLSearchParams();
-    if (search) params.append("search", search);
-    if (pendingOnly) params.append("pending_only", "true");
-
-    const queryString = params.toString() ? `?${params.toString()}` : "";
-    const result = await this.request<any>(
-      `/umrah/without-transport${queryString}`,
-    );
-
-    if (result.success && result.data) {
-      return result.data;
+    await delay(300);
+    
+    // Filter demo data based on search term and pending status
+    let filteredData = [...this.DEMO_UMRAH_WITHOUT_TRANSPORT];
+    
+    if (pendingOnly) {
+      filteredData = filteredData.filter(pkg => pkg.amount_paid < pkg.total_amount);
     }
-    throw new Error(
-      result.message || "Failed to get umrah without transport packages",
-    );
+    
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredData = filteredData.filter(pkg => 
+        pkg.passenger_name.toLowerCase().includes(searchLower) ||
+        pkg.passport_number.toLowerCase().includes(searchLower) ||
+        pkg.remarks?.toLowerCase().includes(searchLower) || false
+      );
+    }
+    
+    return filteredData;
   }
 
   async getUmrahWithoutTransportById(id: string): Promise<any> {
-    const result = await this.request<any>(`/umrah/without-transport/${id}`);
-
-    if (result.success && result.data) {
-      return result.data;
+    await delay(300);
+    const packageData = this.DEMO_UMRAH_WITHOUT_TRANSPORT.find(pkg => pkg.id === id);
+    
+    if (packageData) {
+      return packageData;
     }
-    throw new Error(
-      result.message || "Failed to get umrah without transport package",
-    );
+    throw new Error("Package not found");
   }
 
   async createUmrahWithoutTransport(packageData: {
@@ -707,36 +881,45 @@ export class APIClient {
     amount_paid: number;
     last_payment_date?: string;
     remarks?: string;
-    group_ticket_id?: string; // For auto-deduction from group tickets
+    group_ticket_id?: string;
   }): Promise<any> {
-    const result = await this.request<any>("/umrah/without-transport", {
-      method: "POST",
-      body: JSON.stringify(packageData),
-    });
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(
-      result.message || "Failed to create umrah without transport package",
-    );
+    await delay(500);
+    
+    const newPackage = {
+      id: `UMRAH-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      ...packageData,
+      remaining_amount: packageData.total_amount - packageData.amount_paid,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    // Add to demo data array
+    this.DEMO_UMRAH_WITHOUT_TRANSPORT.push(newPackage);
+    
+    return newPackage;
   }
 
   async updateUmrahWithoutTransport(
     id: string,
     packageData: any,
   ): Promise<any> {
-    const result = await this.request<any>(`/umrah/without-transport/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(packageData),
-    });
-
-    if (result.success && result.data) {
-      return result.data;
+    await delay(500);
+    
+    const index = this.DEMO_UMRAH_WITHOUT_TRANSPORT.findIndex(pkg => pkg.id === id);
+    
+    if (index !== -1) {
+      const updatedPackage = {
+        ...this.DEMO_UMRAH_WITHOUT_TRANSPORT[index],
+        ...packageData,
+        remaining_amount: packageData.total_amount - packageData.amount_paid,
+        updated_at: new Date().toISOString()
+      };
+      
+      this.DEMO_UMRAH_WITHOUT_TRANSPORT[index] = updatedPackage;
+      return updatedPackage;
     }
-    throw new Error(
-      result.message || "Failed to update umrah without transport package",
-    );
+    
+    throw new Error("Package not found");
   }
 
   async recordUmrahPayment(
@@ -746,29 +929,37 @@ export class APIClient {
       payment_date?: string;
     },
   ): Promise<any> {
-    const result = await this.request<any>(
-      `/umrah/without-transport/${id}/payment`,
-      {
-        method: "POST",
-        body: JSON.stringify(paymentData),
-      },
-    );
-
-    if (result.success && result.data) {
-      return result.data;
+    await delay(300);
+    
+    const index = this.DEMO_UMRAH_WITHOUT_TRANSPORT.findIndex(pkg => pkg.id === id);
+    
+    if (index !== -1) {
+      const currentPackage = this.DEMO_UMRAH_WITHOUT_TRANSPORT[index];
+      
+      // Update payment information
+      const updatedPackage = {
+        ...currentPackage,
+        amount_paid: currentPackage.amount_paid + paymentData.amount,
+        remaining_amount: currentPackage.remaining_amount - paymentData.amount,
+        last_payment_date: paymentData.payment_date || new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      
+      this.DEMO_UMRAH_WITHOUT_TRANSPORT[index] = updatedPackage;
+      return updatedPackage;
     }
-    throw new Error(result.message || "Failed to record payment");
+    
+    throw new Error("Package not found");
   }
 
   async deleteUmrahWithoutTransport(id: string): Promise<void> {
-    const result = await this.request<any>(`/umrah/without-transport/${id}`, {
-      method: "DELETE",
-    });
-
-    if (!result.success) {
-      throw new Error(
-        result.message || "Failed to delete umrah without transport package",
-      );
+    await delay(300);
+    
+    const initialLength = this.DEMO_UMRAH_WITHOUT_TRANSPORT.length;
+    this.DEMO_UMRAH_WITHOUT_TRANSPORT = this.DEMO_UMRAH_WITHOUT_TRANSPORT.filter(pkg => pkg.id !== id);
+    
+    if (this.DEMO_UMRAH_WITHOUT_TRANSPORT.length === initialLength) {
+      throw new Error("Package not found");
     }
   }
 
@@ -792,43 +983,127 @@ export class APIClient {
   }
 
   // Umrah Group Ticket methods
+  private DEMO_UMRAH_GROUP_TICKETS = [
+    {
+      id: "1",
+      group_name: "Ramadan Special Group",
+      package_type: "with-transport",
+      departure_date: "2025-10-15",
+      return_date: "2025-10-25",
+      ticket_count: 50,
+      total_cost: 4000000,
+      average_cost_per_ticket: 80000,
+      agent_name: "Premium Travel Agency",
+      agent_contact: "+8801711111111",
+      purchase_notes: "Early bird booking with 10% discount",
+      departure_airline: "Saudi Airlines",
+      departure_flight_number: "SA123",
+      departure_time: "02:30",
+      departure_route: "DAC-JED",
+      return_airline: "Saudi Airlines",
+      return_flight_number: "SA456",
+      return_time: "18:45",
+      return_route: "JED-DAC",
+      remaining_tickets: 25,
+      created_at: "2025-09-01T08:30:00Z",
+      updated_at: "2025-09-01T08:30:00Z"
+    },
+    {
+      id: "2",
+      group_name: "October Group Package",
+      package_type: "with-transport",
+      departure_date: "2025-10-20",
+      return_date: "2025-10-30",
+      ticket_count: 30,
+      total_cost: 2500000,
+      average_cost_per_ticket: 83333,
+      agent_name: "Budget Tours",
+      agent_contact: "+8801822222222",
+      purchase_notes: "Standard package without extra amenities",
+      departure_airline: "Emirates",
+      departure_flight_number: "EK789",
+      departure_time: "22:15",
+      departure_route: "DAC-DXB-JED",
+      return_airline: "Emirates",
+      return_flight_number: "EK101",
+      return_time: "15:30",
+      return_route: "JED-DXB-DAC",
+      remaining_tickets: 15,
+      created_at: "2025-09-10T16:45:00Z",
+      updated_at: "2025-09-10T16:45:00Z"
+    }
+  ];
+
   async getUmrahGroupTickets(
     packageType?: string,
     search?: string,
   ): Promise<any> {
-    const params = new URLSearchParams();
-    if (packageType) params.append("package_type", packageType);
-    if (search) params.append("search", search);
-
-    const queryString = params.toString() ? `?${params.toString()}` : "";
-    const result = await this.request<any>(
-      `/umrah/group-tickets${queryString}`,
-    );
-
-    if (result.success && result.data) {
-      return result.data;
+    await delay(300);
+    
+    // Filter demo data based on package type and search term
+    let filteredData = [...this.DEMO_UMRAH_GROUP_TICKETS];
+    
+    if (packageType) {
+      filteredData = filteredData.filter(ticket => ticket.package_type === packageType);
     }
-    throw new Error(result.message || "Failed to get group tickets");
+    
+    if (search) {
+      const searchLower = search.toLowerCase();
+      filteredData = filteredData.filter(ticket => 
+        ticket.group_name.toLowerCase().includes(searchLower) ||
+        ticket.agent_name.toLowerCase().includes(searchLower)
+      );
+    }
+    
+    return filteredData;
   }
 
   async getUmrahGroupTicketsByDates(packageType: string): Promise<any> {
-    const result = await this.request<any>(
-      `/umrah/group-tickets/by-dates/${packageType}`,
-    );
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to get grouped tickets by dates");
+    await delay(300);
+    
+    // Group tickets by departure and return dates
+    const groupedData: any[] = [];
+    const dateGroups: Record<string, any[]> = {};
+    
+    // Filter by package type first
+    const filteredTickets = packageType 
+      ? this.DEMO_UMRAH_GROUP_TICKETS.filter(ticket => ticket.package_type === packageType)
+      : this.DEMO_UMRAH_GROUP_TICKETS;
+    
+    // Group by departure and return dates
+    filteredTickets.forEach(ticket => {
+      const key = `${ticket.departure_date}-${ticket.return_date}`;
+      if (!dateGroups[key]) {
+        dateGroups[key] = [];
+      }
+      dateGroups[key].push(ticket);
+    });
+    
+    // Format the grouped data
+    Object.entries(dateGroups).forEach(([key, tickets]) => {
+      const [departure_date, return_date] = key.split('-');
+      
+      groupedData.push({
+        departure_date,
+        return_date,
+        group_count: tickets.length,
+        total_tickets: tickets.reduce((sum, ticket) => sum + ticket.ticket_count, 0),
+        total_cost: tickets.reduce((sum, ticket) => sum + ticket.total_cost, 0),
+        groups: tickets
+      });
+    });
+    
+    return groupedData;
   }
 
   async getUmrahGroupTicketById(id: string): Promise<any> {
-    const result = await this.request<any>(`/umrah/group-tickets/${id}`);
-
-    if (result.success && result.data) {
-      return result.data;
+    await delay(300);
+    const ticket = this.DEMO_UMRAH_GROUP_TICKETS.find(t => t.id === id);
+    
+    if (ticket) {
+      return ticket;
     }
-    throw new Error(result.message || "Failed to get group ticket");
+    throw new Error("Group ticket not found");
   }
 
   async createUmrahGroupTicket(ticketData: {
@@ -851,49 +1126,54 @@ export class APIClient {
     return_time?: string;
     return_route?: string;
   }): Promise<any> {
-    const result = await this.request<any>("/umrah/group-tickets", {
-      method: "POST",
-      body: JSON.stringify(ticketData),
-    });
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to create group ticket");
+    await delay(500);
+    
+    const newTicket = {
+      id: `GROUP-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      ...ticketData,
+      average_cost_per_ticket: Math.round(ticketData.total_cost / ticketData.ticket_count),
+      remaining_tickets: ticketData.ticket_count,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    
+    // Add to demo data array
+    this.DEMO_UMRAH_GROUP_TICKETS.push(newTicket);
+    
+    return newTicket;
   }
 
   async updateUmrahGroupTicket(id: string, ticketData: any): Promise<any> {
-    const result = await this.request<any>(`/umrah/group-tickets/${id}`, {
-      method: "PUT",
-      body: JSON.stringify(ticketData),
-    });
-
-    if (result.success && result.data) {
-      return result.data;
+    await delay(500);
+    
+    const index = this.DEMO_UMRAH_GROUP_TICKETS.findIndex(ticket => ticket.id === id);
+    
+    if (index !== -1) {
+      const updatedTicket = {
+        ...this.DEMO_UMRAH_GROUP_TICKETS[index],
+        ...ticketData,
+        average_cost_per_ticket: Math.round(ticketData.total_cost / ticketData.ticket_count),
+        updated_at: new Date().toISOString()
+      };
+      
+      this.DEMO_UMRAH_GROUP_TICKETS[index] = updatedTicket;
+      return updatedTicket;
     }
-    throw new Error(result.message || "Failed to update group ticket");
+    
+    throw new Error("Group ticket not found");
   }
 
   async deleteUmrahGroupTicket(
     id: string,
     force: boolean = false,
   ): Promise<void> {
-    const url = force
-      ? `/umrah/group-tickets/${id}?force=true`
-      : `/umrah/group-tickets/${id}`;
-
-    const result = await this.request<any>(url, {
-      method: "DELETE",
-    });
-
-    if (!result.success) {
-      // Include additional details for better error handling
-      const error = new Error(
-        result.message || "Failed to delete group ticket",
-      );
-      (error as any).canForceDelete = result.canForceDelete;
-      (error as any).details = result.details;
-      throw error;
+    await delay(300);
+    
+    const initialLength = this.DEMO_UMRAH_GROUP_TICKETS.length;
+    this.DEMO_UMRAH_GROUP_TICKETS = this.DEMO_UMRAH_GROUP_TICKETS.filter(ticket => ticket.id !== id);
+    
+    if (this.DEMO_UMRAH_GROUP_TICKETS.length === initialLength) {
+      throw new Error("Group ticket not found");
     }
   }
 
@@ -902,14 +1182,35 @@ export class APIClient {
     departureDate: string,
     returnDate: string,
   ): Promise<any> {
-    const result = await this.request<any>(
-      `/umrah/group-tickets/available/${packageType}/${departureDate}/${returnDate}`,
-    );
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to get available group tickets");
+    await delay(300);
+    
+    // Return demo data for available group tickets
+    return [
+      {
+        id: "1",
+        group_name: "October Special Group",
+        package_type: packageType,
+        departure_date: departureDate,
+        return_date: returnDate,
+        ticket_count: 25,
+        total_cost: 2000000,
+        average_cost_per_ticket: 80000,
+        agent_name: "Dhaka Travel Agency",
+        agent_contact: "+8801712345678",
+        purchase_notes: "Special discount for early booking",
+        departure_airline: "Saudi Airlines",
+        departure_flight_number: "SA123",
+        departure_time: "02:30",
+        departure_route: "DAC-JED",
+        return_airline: "Saudi Airlines",
+        return_flight_number: "SA456",
+        return_time: "18:45",
+        return_route: "JED-DAC",
+        remaining_tickets: 10,
+        created_at: "2025-09-01T08:30:00Z",
+        updated_at: "2025-09-01T08:30:00Z"
+      }
+    ];
   }
 
   async assignPassengerToGroup(assignmentData: {
@@ -917,30 +1218,20 @@ export class APIClient {
     passenger_id: string;
     passenger_type: "with-transport" | "without-transport";
   }): Promise<any> {
-    const result = await this.request<any>("/umrah/group-bookings", {
-      method: "POST",
-      body: JSON.stringify(assignmentData),
-    });
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to assign passenger to group");
+    await delay(300);
+    
+    // Simulate successful assignment
+    return {
+      id: `ASSIGN-${Date.now()}`,
+      ...assignmentData,
+      assigned_at: new Date().toISOString()
+    };
   }
 
   async removePassengerFromGroup(assignmentId: string): Promise<void> {
-    const result = await this.request<any>(
-      `/umrah/group-bookings/${assignmentId}`,
-      {
-        method: "DELETE",
-      },
-    );
-
-    if (!result.success) {
-      throw new Error(
-        result.message || "Failed to remove passenger from group",
-      );
-    }
+    await delay(300);
+    // No return value needed for delete operations
+    // In a real implementation, this would remove the assignment from the data store
   }
 }
 
