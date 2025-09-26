@@ -1,10 +1,9 @@
-import { defineConfig, Plugin } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
-import { createServer } from "./server";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
+export default defineConfig({
   base: "/",
   server: {
     host: "::",
@@ -13,16 +12,14 @@ export default defineConfig(({ mode }) => ({
       overlay: false, // Disable error overlay to prevent HMR connection issues
       clientPort: 8080,
     },
-    // Add middleware to handle HMR connection issues
-    middlewareMode: false,
   },
   build: {
-    outDir: "dist/spa",
+    outDir: "dist",
     // Performance optimizations
     target: "es2020",
     minify: "esbuild",
     cssMinify: true,
-    sourcemap: mode === "development",
+    sourcemap: false,
     // Chunk splitting for better caching
     rollupOptions: {
       output: {
@@ -93,49 +90,17 @@ export default defineConfig(({ mode }) => ({
         },
       },
     },
-    // Remove console logs in production
-    ...(mode === "production" && {
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-        },
-      },
-    }),
   },
-  plugins: [
-    react({
-      // Enable Fast Refresh for better development experience
-      fastRefresh: true,
-    }),
-    expressPlugin(),
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
-      "@server": path.resolve(__dirname, "./server"),
       "@shared": path.resolve(__dirname, "./shared"),
     },
   },
-  // Optimize dependencies
-  optimizeDeps: {
-    include: [
-      "react",
-      "react-dom",
-      "react-router-dom",
-      "framer-motion",
-      "lucide-react",
-      "@radix-ui/react-dialog",
-      "@radix-ui/react-select",
-      "@radix-ui/react-tabs",
-      "@radix-ui/react-popover",
-      "@radix-ui/react-toast",
-    ],
-    exclude: ["@react-three/fiber", "@react-three/drei", "three"], // Exclude heavy 3D libs if not used
-  },
   // CSS optimization
   css: {
-    devSourcemap: mode === "development",
+    devSourcemap: false,
     preprocessorOptions: {
       scss: {
         additionalData: `@import "@/styles/variables.scss";`, // If using SCSS
@@ -147,17 +112,4 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     host: "::",
   },
-}));
-
-function expressPlugin(): Plugin {
-  return {
-    name: "express-plugin",
-    apply: "serve", // Only apply during development (serve mode)
-    configureServer(server) {
-      const app = createServer();
-
-      // Add Express app as middleware to Vite dev server
-      server.middlewares.use(app);
-    },
-  };
-}
+});

@@ -60,7 +60,6 @@ import {
   DialogTrigger,
 } from "../components/ui/dialog";
 import { apiClient } from "../services/api";
-import { Booking } from "@shared/api";
 
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
@@ -202,7 +201,7 @@ export default function Bookings() {
       );
       console.log("বুকিং আইডি / Booking ID:", bookingId);
       console.log("যাত্রীর নাম / Passenger Name:", booking.passengerInfo?.name);
-      console.log("পূর্বের স্ট্য���টাস / Previous Status:", currentStatus);
+      console.log("পূর্বের স্ট্যটাস / Previous Status:", currentStatus);
       console.log("নতুন স্ট্যাটাস / New Status:", newStatus);
       console.log("ব্যবহারকারী / User:", user?.name);
       console.log("সময় / Time:", new Date().toLocaleString());

@@ -61,7 +61,15 @@ const PlaceholderPage = ({ title }: { title: string }) => (
   </div>
 );
 
-const queryClient = new QueryClient();
+// Create a simple query client for react-query
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      cacheTime: 1000 * 60 * 10, // 10 minutes
+    },
+  },
+});
 
 const App = () => (
   <ErrorBoundary>

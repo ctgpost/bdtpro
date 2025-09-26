@@ -1,75 +1,96 @@
-# BDTPro - Bangladesh Travel Agency Management System
+# BD TicketPro - Frontend Only Version
 
-BDTPro is a comprehensive travel agency management system built with modern web technologies. It allows travel agencies to manage their operations including ticket bookings, customer management, and travel packages.
+This is a frontend-only version of the BD TicketPro Travel Agency Management System. All backend functionality has been replaced with simulated data to demonstrate the UI/UX without requiring a server.
 
-## Features
+## 🚀 Features
 
-- User authentication and authorization
-- Ticket booking management
-- Customer information management
-- Travel package listings
-- Admin dashboard
-- Responsive design for all devices
+- **Authentication System** - Login with demo accounts
+- **Dashboard** - Overview of ticket inventory and bookings
+- **Countries Management** - View countries with ticket availability
+- **Ticket Management** - Manage tickets by country
+- **Booking System** - Create and manage customer bookings
+- **Admin Buying** - Simulate ticket batch purchases
+- **Umrah Management** - Specialized management for Umrah packages
+- **Reports** - View business analytics and reports
+- **Settings** - Configure application settings
 
-## Tech Stack
+## 🎯 Demo Accounts
 
-- **Frontend**: React with TypeScript
-- **Backend**: Node.js with Express
-- **Database**: PostgreSQL
-- **Deployment**: Vercel
-- **Build Tool**: Vite
+You can log in with any of these demo accounts:
 
-## Getting Started
+- **Admin**: username `admin`, password `admin123`
+- **Manager**: username `manager`, password `manager123`
+- **Staff**: username `staff`, password `staff123`
 
-### Prerequisites
+You can also use any username with password `demo` for quick access.
 
-- Node.js (v14 or higher)
-- PostgreSQL database
-- npm or yarn package manager
+## 🛠️ Development Setup
 
-### Installation
-
-1. Clone the repository
-2. Install dependencies:
+1. **Install dependencies**:
    ```bash
    npm install
    ```
 
-3. Set up environment variables:
-   Create a `.env` file based on `.env.example`:
-   ```env
-   # Server Configuration
-   NODE_ENV=development
-   PORT=8080
-
-   # JWT Configuration
-   JWT_SECRET=your-super-secret-jwt-key-here-change-this-in-production-please
-   JWT_EXPIRES_IN=7d
-
-   # Database Configuration
-   DB_USER=postgres
-   DB_HOST=localhost
-   DB_NAME=bd_ticketpro
-   DB_PASSWORD=your_postgres_password_here
-   DB_PORT=5432
-
-   # CORS Configuration
-   ALLOWED_ORIGINS=http://localhost:8080
-   ```
-
-4. Run the development server:
+2. **Run development server**:
    ```bash
    npm run dev
    ```
 
-## Deployment
+3. **Build for production**:
+   ```bash
+   npm run build
+   ```
 
-This project is configured for deployment on Vercel. Simply connect your GitHub repository to Vercel for automatic deployments.
+4. **Preview production build**:
+   ```bash
+   npm run preview
+   ```
 
-## Contributing
+## 📁 Project Structure
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+```
+client/
+  ├── components/     # Reusable UI components
+  ├── context/        # React context providers (Auth)
+  ├── hooks/          # Custom React hooks
+  ├── lib/            # Utility functions
+  ├── pages/          # Page components
+  ├── services/       # API service layer
+  └── App.tsx         # Main application component
+```
 
-## License
+## 🎨 UI Components
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+The application uses a comprehensive set of UI components built with:
+- Radix UI for accessible primitives
+- Tailwind CSS for styling
+- Framer Motion for animations
+- Lucide React for icons
+
+## 📱 Responsive Design
+
+The application is fully responsive and works on:
+- Desktop computers
+- Tablets
+- Mobile devices
+
+## 🔐 Authentication
+
+The authentication system simulates login/logout functionality without a backend. User data is stored in localStorage for demonstration purposes.
+
+## 📊 Data Simulation
+
+All data is simulated in the frontend:
+- Countries, tickets, and bookings are stored in memory
+- CRUD operations update the in-memory data
+- Changes persist during the session but are not saved between sessions
+
+## 🚀 Deployment
+
+To deploy this frontend-only application:
+1. Build the project: `npm run build`
+2. Deploy the `dist` folder to any static hosting service (Vercel, Netlify, GitHub Pages, etc.)
+
+## 📞 Support
+
+For issues with the frontend application, please create an issue in the repository.

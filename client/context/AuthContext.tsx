@@ -5,15 +5,23 @@ import React, {
   useEffect,
   ReactNode,
 } from "react";
-import { User, UserRole, LoginRequest } from "@shared/api";
-import { apiClient } from "../services/api";
+
+interface User {
+  id: string;
+  username: string;
+  role: "admin" | "manager" | "staff";
+  name: string;
+  email?: string;
+  phone?: string;
+  createdAt: string;
+}
 
 interface AuthContextType {
   user: User | null;
-  login: (credentials: LoginRequest) => Promise<boolean>;
+  login: (credentials: { username: string; password: string }) => Promise<boolean>;
   logout: () => void;
   hasPermission: (permission: string) => boolean;
-  isRole: (role: UserRole) => boolean;
+  isRole: (role: "admin" | "manager" | "staff") => boolean;
   loading: boolean;
   updateUser: (userData: Partial<User>) => void;
 }
@@ -42,6 +50,36 @@ const PERMISSIONS = {
   staff: ["view_tickets", "create_bookings", "partial_payments"],
 };
 
+const DEMO_USERS = {
+  admin: {
+    id: "1",
+    username: "admin",
+    role: "admin" as const,
+    name: "Admin User",
+    email: "admin@example.com",
+    phone: "+1234567890",
+    createdAt: new Date().toISOString(),
+  },
+  manager: {
+    id: "2",
+    username: "manager",
+    role: "manager" as const,
+    name: "Manager User",
+    email: "manager@example.com",
+    phone: "+1234567891",
+    createdAt: new Date().toISOString(),
+  },
+  staff: {
+    id: "3",
+    username: "staff",
+    role: "staff" as const,
+    name: "Staff User",
+    email: "staff@example.com",
+    phone: "+1234567892",
+    createdAt: new Date().toISOString(),
+  },
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -65,54 +103,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check for stored auth data
-    const token = localStorage.getItem("bd_ticket_pro_token");
     const userData = localStorage.getItem("bd_ticket_pro_user");
 
-    if (token && userData) {
+    if (userData) {
       try {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
-
-        // Verify token with server to ensure user still exists
-        apiClient
-          .getCurrentUser()
-          .then((currentUser) => {
-            setUser(currentUser);
-          })
-          .catch((error) => {
-            console.warn("Token verification failed:", error.message);
-            localStorage.removeItem("bd_ticket_pro_token");
-            localStorage.removeItem("bd_ticket_pro_user");
-            setUser(null);
-          });
       } catch (error) {
         console.error("Error parsing stored user data:", error);
-        localStorage.removeItem("bd_ticket_pro_token");
         localStorage.removeItem("bd_ticket_pro_user");
       }
     }
     setLoading(false);
   }, []);
 
-  const login = async (credentials: LoginRequest): Promise<boolean> => {
-    try {
-      const response = await apiClient.login(credentials);
-      setUser(response.user);
+  const login = async (credentials: { 
+    username: string; 
+    password: string 
+  }): Promise<boolean> => {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+    
+    // Demo login - accept any of the predefined users
+    const demoUser = DEMO_USERS[credentials.username as keyof typeof DEMO_USERS];
+    
+    if (demoUser && credentials.password === `${credentials.username}123`) {
+      setUser(demoUser);
+      localStorage.setItem("bd_ticket_pro_user", JSON.stringify(demoUser));
       return true;
-    } catch (error) {
-      console.error("Login error:", error);
-      return false;
     }
+    
+    // Also accept the bypass login for any username with password "demo"
+    if (credentials.password === "demo") {
+      const user = {
+        id: "demo-" + Date.now(),
+        username: credentials.username,
+        role: "admin" as const,
+        name: `${credentials.username} (Demo)`,
+        email: `${credentials.username}@demo.com`,
+        createdAt: new Date().toISOString(),
+      };
+      setUser(user);
+      localStorage.setItem("bd_ticket_pro_user", JSON.stringify(user));
+      return true;
+    }
+    
+    return false;
   };
 
   const logout = () => {
     setUser(null);
-    // Clear all authentication data
-    localStorage.removeItem("bd_ticket_pro_token");
     localStorage.removeItem("bd_ticket_pro_user");
-    // Clear token from API client
-    (apiClient as any).authToken = null;
-    apiClient.logout().catch(console.error);
   };
 
   const hasPermission = (permission: string): boolean => {
@@ -120,7 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return PERMISSIONS[user.role]?.includes(permission) || false;
   };
 
-  const isRole = (role: UserRole): boolean => {
+  const isRole = (role: "admin" | "manager" | "staff"): boolean => {
     return user?.role === role;
   };
 
@@ -149,20 +190,6 @@ export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {
     // During HMR, context might be temporarily undefined
-    if (import.meta.hot && typeof window !== "undefined") {
-      console.warn(
-        "AuthContext undefined during hot reload, returning default values",
-      );
-      return {
-        user: null,
-        login: async () => false,
-        logout: () => {},
-        hasPermission: () => false,
-        isRole: () => false,
-        loading: true,
-        updateUser: () => {},
-      };
-    }
     throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;

@@ -1,7 +1,4 @@
 import {
-  LoginRequest,
-  LoginResponse,
-  User,
   CreateTicketBatchRequest,
   CreateBookingRequest,
   DashboardStats,
@@ -9,7 +6,30 @@ import {
   TicketsResponse,
   BookingResponse,
   TicketBatchResponse,
-} from "@shared/api";
+} from "@/shared/api";
+
+// Define types directly in this file instead of importing from shared
+type UserRole = "admin" | "manager" | "staff";
+
+interface User {
+  id: string;
+  username: string;
+  role: UserRole;
+  name: string;
+  email?: string;
+  phone?: string;
+  createdAt: string;
+}
+
+interface LoginRequest {
+  username: string;
+  password: string;
+}
+
+interface LoginResponse {
+  user: User;
+  token: string;
+}
 
 // API configuration
 const API_BASE_URL = "/api";
@@ -18,8 +38,67 @@ const API_BASE_URL = "/api";
 const originalFetch = window.fetch.bind(window);
 (window as any).__originalFetch = originalFetch;
 
-// API client class
-class APIClient {
+// Simple frontend-only API client that simulates backend responses
+
+// Demo data
+const DEMO_COUNTRIES = [
+  { code: "SA", name: "Saudi Arabia", flag: "🇸🇦", totalTickets: 150, availableTickets: 85 },
+  { code: "AE", name: "United Arab Emirates", flag: "🇦🇪", totalTickets: 95, availableTickets: 42 },
+  { code: "TR", name: "Turkey", flag: "🇹🇷", totalTickets: 75, availableTickets: 30 },
+  { code: "MY", name: "Malaysia", flag: "🇲🇾", totalTickets: 120, availableTickets: 75 },
+  { code: "ID", name: "Indonesia", flag: "🇮🇩", totalTickets: 80, availableTickets: 25 },
+];
+
+const DEMO_TICKETS = [
+  { id: "1", batchId: "B001", country: "SA", ticketNumber: "SA-00001", status: "available" as const, sellingPrice: 850 },
+  { id: "2", batchId: "B001", country: "SA", ticketNumber: "SA-00002", status: "booked" as const, sellingPrice: 850 },
+  { id: "3", batchId: "B002", country: "AE", ticketNumber: "AE-00001", status: "available" as const, sellingPrice: 720 },
+  { id: "4", batchId: "B003", country: "TR", ticketNumber: "TR-00001", status: "sold" as const, sellingPrice: 650 },
+];
+
+const DEMO_BATCHES = [
+  { 
+    id: "B001", 
+    country: "SA", 
+    airline: "Saudi Airlines", 
+    flightDate: "2025-10-15", 
+    flightTime: "14:30", 
+    buyingPrice: 650, 
+    quantity: 50, 
+    agentName: "Saudi Travel Agency", 
+    createdAt: "2025-09-01", 
+    createdBy: "admin" 
+  },
+  { 
+    id: "B002", 
+    country: "AE", 
+    airline: "Emirates", 
+    flightDate: "2025-10-20", 
+    flightTime: "10:15", 
+    buyingPrice: 580, 
+    quantity: 30, 
+    agentName: "Dubai Connect", 
+    createdAt: "2025-09-05", 
+    createdBy: "admin" 
+  },
+];
+
+const DEMO_BOOKINGS = [
+  { 
+    id: "BK001", 
+    customerName: "Ahmed Hassan", 
+    ticketId: "2", 
+    bookingDate: "2025-09-20", 
+    travelDate: "2025-10-15", 
+    amount: 850, 
+    status: "confirmed" as const 
+  },
+];
+
+// Simulate API delay
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+export class APIClient {
   private baseURL: string;
   private authToken: string | null = null;
 
@@ -123,89 +202,115 @@ class APIClient {
   }
 
   // Authentication methods
-  async login(credentials: LoginRequest): Promise<LoginResponse> {
-    const result = await this.request<LoginResponse>("/auth/login", {
-      method: "POST",
-      body: JSON.stringify(credentials),
-    });
-
-    if (result.success && result.data) {
-      this.authToken = result.data.token;
-      localStorage.setItem("bd_ticket_pro_token", result.data.token);
-      localStorage.setItem(
-        "bd_ticket_pro_user",
-        JSON.stringify(result.data.user),
-      );
-      return result.data;
+  async login(credentials: { username: string; password: string }) {
+    await delay(500);
+    
+    // Demo login - accept any of the predefined users
+    const validUsers: Record<string, any> = {
+      admin: {
+        user: {
+          id: "1",
+          username: "admin",
+          role: "admin",
+          name: "Admin User",
+          email: "admin@example.com",
+          phone: "+1234567890",
+          createdAt: new Date().toISOString(),
+        },
+        token: "demo-jwt-token-admin"
+      },
+      manager: {
+        user: {
+          id: "2",
+          username: "manager",
+          role: "manager",
+          name: "Manager User",
+          email: "manager@example.com",
+          phone: "+1234567891",
+          createdAt: new Date().toISOString(),
+        },
+        token: "demo-jwt-token-manager"
+      },
+      staff: {
+        user: {
+          id: "3",
+          username: "staff",
+          role: "staff",
+          name: "Staff User",
+          email: "staff@example.com",
+          phone: "+1234567892",
+          createdAt: new Date().toISOString(),
+        },
+        token: "demo-jwt-token-staff"
+      }
+    };
+    
+    if (validUsers[credentials.username] && credentials.password === `${credentials.username}123`) {
+      return validUsers[credentials.username];
     }
-
-    throw new Error(result.message || "Login failed");
+    
+    // Also accept the bypass login for any username with password "demo"
+    if (credentials.password === "demo") {
+      return {
+        user: {
+          id: "demo-" + Date.now(),
+          username: credentials.username,
+          role: "admin",
+          name: `${credentials.username} (Demo)`,
+          email: `${credentials.username}@demo.com`,
+          createdAt: new Date().toISOString(),
+        },
+        token: "demo-jwt-token-demo"
+      };
+    }
+    
+    throw new Error("Invalid username or password");
   }
 
-  async logout(): Promise<void> {
-    try {
-      await this.request("/auth/logout", { method: "POST" });
-    } finally {
-      this.authToken = null;
-      localStorage.removeItem("bd_ticket_pro_token");
-      localStorage.removeItem("bd_ticket_pro_user");
-    }
+  async logout() {
+    await delay(100);
+    return { success: true };
   }
 
-  async getCurrentUser(): Promise<User> {
-    const result = await this.request<User>("/auth/me");
-    if (result.success && result.data) {
-      return result.data;
+  async getCurrentUser() {
+    await delay(200);
+    const userData = localStorage.getItem("bd_ticket_pro_user");
+    if (userData) {
+      return JSON.parse(userData);
     }
-    throw new Error(result.message || "Failed to get user");
+    throw new Error("Not authenticated");
   }
 
   // Dashboard methods
-  async getDashboardStats(): Promise<DashboardStats> {
-    const result = await this.request<DashboardStats>(
-      "/tickets/dashboard/stats",
-    );
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to get dashboard stats");
+  async getDashboardStats() {
+    await delay(300);
+    return {
+      totalTickets: 500,
+      availableTickets: 280,
+      bookedTickets: 150,
+      soldTickets: 70,
+      totalBookings: 220,
+      recentActivity: [
+        { id: 1, action: "Ticket booked", user: "Staff User", time: "2 mins ago" },
+        { id: 2, action: "New ticket batch", user: "Admin User", time: "1 hour ago" },
+        { id: 3, action: "Payment received", user: "Manager User", time: "3 hours ago" },
+      ]
+    };
   }
 
   // Countries methods
-  async getCountries(): Promise<CountriesResponse> {
-    const result = await this.request<CountriesResponse>(
-      "/tickets/countries/stats",
-    );
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to get countries");
+  async getCountries() {
+    await delay(300);
+    return DEMO_COUNTRIES;
   }
 
   // Tickets methods
-  async getTickets(filters?: {
-    country?: string;
-    status?: string;
-    airline?: string;
-    limit?: number;
-    offset?: number;
-  }): Promise<TicketsResponse> {
-    const params = new URLSearchParams();
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined) {
-          params.append(key, value.toString());
-        }
-      });
+  async getTickets(filters?: { country?: string }) {
+    await delay(300);
+    if (filters?.country) {
+      return DEMO_TICKETS.filter(ticket => ticket.country === filters.country);
     }
-
-    const endpoint = `/tickets${params.toString() ? `?${params.toString()}` : ""}`;
-    const result = await this.request<TicketsResponse>(endpoint);
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to get tickets");
+    return DEMO_TICKETS;
   }
 
   async getTicketsByCountry(
@@ -277,102 +382,42 @@ class APIClient {
   }
 
   // Ticket Batch methods
-  async getTicketBatches(filters?: {
-    country?: string;
-    airline?: string;
-    dateFrom?: string;
-    dateTo?: string;
-  }): Promise<any> {
-    const params = new URLSearchParams();
-    if (filters) {
-      Object.entries(filters).forEach(([key, value]) => {
-        if (value !== undefined) {
-          params.append(key, value.toString());
-        }
-      });
-    }
-
-    const endpoint = `/ticket-batches${params.toString() ? `?${params.toString()}` : ""}`;
-    const result = await this.request<any>(endpoint);
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to get ticket batches");
+  async getTicketBatches() {
+    await delay(300);
+    return DEMO_BATCHES;
   }
 
-  async createTicketBatch(
-    batchData: CreateTicketBatchRequest,
-  ): Promise<TicketBatchResponse> {
-    const result = await this.request<TicketBatchResponse>("/ticket-batches", {
-      method: "POST",
-      body: JSON.stringify(batchData),
-    });
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to create ticket batch");
+  async createTicketBatch(batchData: any) {
+    await delay(500);
+    return {
+      success: true,
+      message: "Ticket batch created successfully",
+      data: {
+        id: "B" + (DEMO_BATCHES.length + 1).toString().padStart(3, "0"),
+        ...batchData,
+        createdAt: new Date().toISOString(),
+        createdBy: "current-user"
+      }
+    };
   }
 
   // Bookings methods
-  async getBookings(
-    filters?: {
-      status?: string;
-      limit?: number;
-      offset?: number;
-    },
-    retryCount = 0,
-  ): Promise<any[]> {
-    try {
-      const params = new URLSearchParams();
-      if (filters) {
-        Object.entries(filters).forEach(([key, value]) => {
-          if (value !== undefined) {
-            params.append(key, value.toString());
-          }
-        });
-      }
-
-      const endpoint = `/bookings${params.toString() ? `?${params.toString()}` : ""}`;
-      const result = await this.request<any>(endpoint);
-
-      if (result.success && result.data) {
-        // Return the bookings array from the nested data structure
-        return result.data.bookings || [];
-      }
-      throw new Error(result.message || "Failed to get bookings");
-    } catch (error) {
-      // Retry up to 2 times for network errors
-      if (
-        retryCount < 2 &&
-        error instanceof Error &&
-        (error.message.includes("Failed to fetch") ||
-          error.message.includes("Network error") ||
-          error.message.includes("Unable to connect"))
-      ) {
-        console.log(`Retrying getBookings (attempt ${retryCount + 1})`);
-        await new Promise((resolve) =>
-          setTimeout(resolve, 1000 * (retryCount + 1)),
-        ); // Progressive delay
-        return this.getBookings(filters, retryCount + 1);
-      }
-      throw error;
-    }
+  async getBookings() {
+    await delay(300);
+    return DEMO_BOOKINGS;
   }
 
-  async createBooking(
-    bookingData: CreateBookingRequest,
-  ): Promise<BookingResponse> {
-    const result = await this.request<BookingResponse>("/bookings", {
-      method: "POST",
-      body: JSON.stringify(bookingData),
-    });
-
-    if (result.success && result.data) {
-      return result.data;
-    }
-    throw new Error(result.message || "Failed to create booking");
+  async createBooking(bookingData: any) {
+    await delay(500);
+    return {
+      success: true,
+      message: "Booking created successfully",
+      data: {
+        id: "BK" + (DEMO_BOOKINGS.length + 1).toString().padStart(3, "0"),
+        ...bookingData,
+        status: "confirmed"
+      }
+    };
   }
 
   async updateBookingStatus(id: string, status: string): Promise<void> {
@@ -899,58 +944,4 @@ class APIClient {
   }
 }
 
-// Create and export API client instance
-export const apiClient = new APIClient(API_BASE_URL);
-
-// Export individual methods for convenience
-export const {
-  login,
-  logout,
-  getCurrentUser,
-  getDashboardStats,
-  getCountries,
-  getTickets,
-  getTicketsByCountry,
-  getTicketById,
-  updateTicketStatus,
-  getTicketBatches,
-  createTicketBatch,
-  getBookings,
-  createBooking,
-  updateBookingStatus,
-  cancelBooking,
-  getUsers,
-  createUser,
-  updateUser,
-  updateProfile,
-  updatePassword,
-  deleteUser,
-  getSettings,
-  updateSettings,
-  exportData,
-  getActivityLogs,
-  getSystemInfo,
-  createBackup,
-  getUmrahWithTransport,
-  getUmrahWithTransportById,
-  createUmrahWithTransport,
-  updateUmrahWithTransport,
-  deleteUmrahWithTransport,
-  getUmrahWithoutTransport,
-  getUmrahWithoutTransportById,
-  createUmrahWithoutTransport,
-  updateUmrahWithoutTransport,
-  recordUmrahPayment,
-  deleteUmrahWithoutTransport,
-  getUmrahPaymentSummary,
-  getUmrahStats,
-  getUmrahGroupTickets,
-  getUmrahGroupTicketsByDates,
-  getUmrahGroupTicketById,
-  createUmrahGroupTicket,
-  updateUmrahGroupTicket,
-  deleteUmrahGroupTicket,
-  getAvailableGroupTickets,
-  assignPassengerToGroup,
-  removePassengerFromGroup,
-} = apiClient;
+export const apiClient = new APIClient();

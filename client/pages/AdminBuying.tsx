@@ -448,7 +448,7 @@ export default function AdminBuying() {
     { code: "OMN", name: "Oman", flag: "🇴🇲" },
     { code: "BHR", name: "Bahrain", flag: "🇧🇭" },
     { code: "JOR", name: "Jordan", flag: "🇯🇴" },
-    { code: "LBN", name: "Lebanon", flag: "���🇧" },
+    { code: "LBN", name: "Lebanon", flag: "🇱🇧" },
   ];
 
   const airlines = [
