@@ -5,6 +5,7 @@ import { createServer } from "./server";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: "/",
   server: {
     host: "::",
     port: 8080,
@@ -79,13 +80,16 @@ export default defineConfig(({ mode }) => ({
         assetFileNames: (assetInfo) => {
           const info = assetInfo.name.split(".");
           const extType = info[info.length - 1];
-          if (/\.(png|jpe?g|svg|gif|tiff|bmp|ico)$/i.test(assetInfo.name)) {
-            return `images/[name]-[hash][extname]`;
+          if (/\.(css|scss|sass|less|styl)$/.test(extType)) {
+            return "css/[name]-[hash][extname]";
           }
-          if (/\.(css)$/i.test(assetInfo.name)) {
-            return `css/[name]-[hash][extname]`;
+          if (/png|jpe?g|gif|svg|webp|avif|ico/i.test(extType)) {
+            return "images/[name]-[hash][extname]";
           }
-          return `assets/[name]-[hash][extname]`;
+          if (/woff2?|eot|ttf|otf/i.test(extType)) {
+            return "fonts/[name]-[hash][extname]";
+          }
+          return "[name]-[hash][extname]";
         },
       },
     },
@@ -109,6 +113,7 @@ export default defineConfig(({ mode }) => ({
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
+      "@server": path.resolve(__dirname, "./server"),
       "@shared": path.resolve(__dirname, "./shared"),
     },
   },
