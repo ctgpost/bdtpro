@@ -97,6 +97,7 @@ The project is now properly configured for Vercel deployment:
 - Fixed entry point issues
 - Correct build output directory (`dist/spa`)
 - Proper routing configuration in `vercel.json`
+- Relative asset paths for proper loading on Vercel
 
 ## 📞 Support
 
