@@ -1,48 +1,52 @@
 # BD TicketPro - Vercel Deployment Guide
 
-## 🚀 Vercel এ সম্পূর্ণ Deployment Process
+## 🚀 Vercel Deployment Process
 
-### ধাপ ১: Repository Preparation
+### Step 1: Repository Preparation
 
-1. **GitHub এ Code Push করুন:**
+1. **Push code to GitHub:**
    ```bash
    git add .
    git commit -m "Ready for Vercel deployment"
    git push origin main
    ```
 
-### ধাপ ২: Vercel Account Setup
+### Step 2: Vercel Account Setup
 
-1. [vercel.com](https://vercel.com) এ যান
-2. GitHub দিয়ে Sign up/Login করুন
-3. "Import Project" ক্লিক করুন
-4. আপনার GitHub repository select করুন
+1. Go to [vercel.com](https://vercel.com)
+2. Sign up/Login with GitHub
+3. Click "Import Project"
+4. Select your GitHub repository
 
-### ধাপ ৩: Project Configuration
+### Step 3: Project Configuration
 
-Vercel এ import করার সময়:
+When importing on Vercel:
 
-1. **Project Name:** `bd-ticketpro` (অথবা আপনার পছন্দের নাম)
-2. **Framework:** Vite (auto-detected)
-3. **Build Command:** `npm run build` (auto-detected)
-4. **Output Directory:** `dist/spa` (auto-detected)
+1. **Project Name:** `bd-ticketpro` (or your preferred name)
+2. **Framework:** Other (manual configuration)
+3. **Build Command:** `npm run build`
+4. **Output Directory:** `dist/spa`
 
-### ধাপ ৪: Environment Variables Setup
+### Step 4: Environment Variables Setup
 
-Vercel Dashboard এ Environment Variables add করুন:
+Add these environment variables in the Vercel Dashboard:
 
 **Required Variables:**
 
 ```
 NODE_ENV=production
-JWT_SECRET=আপনার-সিকিউর-জেডব্লিউটি-সিক্রেট-কী-৩২-ক্যারেক্টার-মিনিমাম
+JWT_SECRET=your-secure-jwt-secret-key-minimum-32-characters
+DB_USER=your-database-username
+DB_HOST=your-database-host
+DB_NAME=your-database-name
+DB_PASSWORD=your-database-password
+DB_PORT=5432
 ```
 
 **Optional Variables:**
 
 ```
 DEBUG=false
-DATABASE_PATH=/tmp/bd-ticketpro.db
 CORS_ORIGINS=https://your-app-name.vercel.app
 ```
 
@@ -54,14 +58,13 @@ CORS_ORIGINS=https://your-app-name.vercel.app
 
 ## 🔧 Post-Deployment Configuration
 
-### Database Initialization
+### Database Setup
 
-প্রথমবার deploy হওয়ার পর:
+For PostgreSQL database:
 
-1. আপনার Vercel app URL এ যান: `https://your-app.vercel.app`
-2. Login page দেখতে পাবেন
-3. Database automatically initialize হবে
-4. Default admin account তৈরি হবে
+1. Set up a PostgreSQL database (you can use services like Supabase, Railway, or any PostgreSQL provider)
+2. Add the database connection details in Vercel environment variables
+3. The application will automatically initialize the database tables on first access
 
 ### Default Login Credentials
 
@@ -100,10 +103,10 @@ CORS_ORIGINS=https://your-app.vercel.app,https://custom-domain.com,https://www.c
 - **সমস্যা:** Function timeout
 - **সমাধান:** vercel.json এ maxDuration increase করুন
 
-### ৩. Database Connection Error
+### 3. Database Connection Error
 
-- **সমস্যা:** SQLite file permission
-- **সমাধান:** `/tmp/` path use করুন Vercel এ
+- **Problem:** Incorrect database configuration
+- **Solution:** Verify all database environment variables are correctly set
 
 ### ৪. Authentication না কাজ করা
 

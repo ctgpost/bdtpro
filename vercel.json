@@ -3,7 +3,12 @@
   "builds": [
     {
       "src": "dist/server/node-build.mjs",
-      "use": "@vercel/node"
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "dist/**"
+        ]
+      }
     },
     {
       "src": "dist/spa/index.html",
@@ -31,5 +36,8 @@
       "src": "/(.*)",
       "dest": "dist/spa/index.html"
     }
-  ]
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  }
 }
