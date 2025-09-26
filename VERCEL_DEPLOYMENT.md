@@ -31,17 +31,21 @@ When importing on Vercel:
 
 Add these environment variables in the Vercel Dashboard:
 
-**Required Variables:**
+**For Supabase Database:**
 
 ```
 NODE_ENV=production
 JWT_SECRET=your-secure-jwt-secret-key-minimum-32-characters
-DB_USER=your-database-username
-DB_HOST=your-database-host
-DB_NAME=your-database-name
-DB_PASSWORD=your-database-password
-DB_PORT=5432
+DATABASE_URL=your-supabase-database-connection-string
 ```
+
+**How to get your Supabase DATABASE_URL:**
+
+1. Go to your Supabase project dashboard
+2. Click on "Settings" in the left sidebar
+3. Click on "Database"
+4. Find "Connection string" and copy the "URI" version
+5. It will look like: `postgresql://postgres:[YOUR-PASSWORD]@db.[PROJECT-REF].supabase.co:5432/postgres`
 
 **Optional Variables:**
 
@@ -50,21 +54,25 @@ DEBUG=false
 CORS_ORIGINS=https://your-app-name.vercel.app
 ```
 
-### ধাপ ৫: Deployment
+### Step 5: Supabase Configuration
 
-1. "Deploy" বাটন ক্লিক করুন
-2. Build process সম্পূর্ণ হওয়ার জন্য অপেক্ষা করুন (৫-১�� মিনিট)
-3. Deployment সফল হলে আপনার app URL পাবেন
+Before deploying, you need to set up your Supabase project:
+
+1. Create a new Supabase project at [supabase.com](https://supabase.com)
+2. Get your database connection string from the Supabase dashboard
+3. Add the connection string as DATABASE_URL in Vercel environment variables
+
+### Step 6: Deployment
+
+1. Click "Deploy" button
+2. Wait for build process to complete (5-10 minutes)
+3. You'll get your app URL when deployment is successful
 
 ## 🔧 Post-Deployment Configuration
 
-### Database Setup
+### Database Initialization
 
-For PostgreSQL database:
-
-1. Set up a PostgreSQL database (you can use services like Supabase, Railway, or any PostgreSQL provider)
-2. Add the database connection details in Vercel environment variables
-3. The application will automatically initialize the database tables on first access
+The application will automatically create the necessary tables when it first starts. However, you may need to ensure your Supabase database allows the required operations.
 
 ### Default Login Credentials
 
@@ -73,58 +81,63 @@ Username: admin
 Password: admin123
 ```
 
-**⚠️ Security Warning:** First login এর পর অবশ্যই password change করুন!
+**⚠️ Security Warning:** Change the default password immediately after first login!
 
-## 📝 Environment Variables বিস্তারিত
+## 📝 Environment Variables Details
 
-### JWT_SECRET তৈরি করার উপায়:
+### Generating JWT_SECRET:
 
 ```bash
-# Terminal এ run করুন (নিরাপদ secret তৈরির জন্য)
+# Run in terminal to generate a secure secret
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 ### CORS_ORIGINS Configuration:
 
 ```
-# একাধিক domain এর জন্য
+# For multiple domains
 CORS_ORIGINS=https://your-app.vercel.app,https://custom-domain.com,https://www.custom-domain.com
 ```
 
-## 🚨 Common Issues এবং Solutions
+## 🚨 Common Issues and Solutions
 
-### ১. Build Failed
+### 1. Build Failed
 
-- **সমস্যা:** Node.js version mismatch
-- **সমাধান:** Vercel dashboard এ Node.js version 20.x set কর��ন
+- **Problem:** Node.js version mismatch
+- **Solution:** Set Node.js version to 20.x in Vercel dashboard
 
-### ২. API Routes না কাজ করা
+### 2. API Routes Not Working
 
-- **সমস্যা:** Function timeout
-- **সমাধান:** vercel.json এ maxDuration increase করুন
+- **Problem:** Function timeout
+- **Solution:** Increase maxDuration in vercel.json if needed
 
 ### 3. Database Connection Error
 
 - **Problem:** Incorrect database configuration
-- **Solution:** Verify all database environment variables are correctly set
+- **Solution:** Verify DATABASE_URL is correctly set with proper credentials
 
-### ৪. Authentication না কাজ করা
+### 4. Authentication Not Working
 
-- **সমস্যা:** JWT_SECRET missing
-- **সমাধান:** Environment variables properly set করুন
+- **Problem:** Missing JWT_SECRET
+- **Solution:** Ensure JWT_SECRET environment variable is properly set
+
+### 5. Supabase Connection Issues
+
+- **Problem:** Connection pooling or SSL settings
+- **Solution:** The application is already configured to work with Supabase's requirements
 
 ## 🔄 Re-deployment Process
 
-Code update করার পর:
+After updating code:
 
-1. **Local এ test করুন:**
+1. **Test locally:**
 
    ```bash
    npm run build
    npm run start
    ```
 
-2. **GitHub এ push করুন:**
+2. **Push to GitHub:**
 
    ```bash
    git add .
@@ -132,11 +145,11 @@ Code update করার পর:
    git push origin main
    ```
 
-3. **Vercel automatically re-deploy করবে** (1-2 মিনিট)
+3. **Vercel will automatically re-deploy** (1-2 minutes)
 
 ## 📊 Performance Monitoring
 
-Vercel Dashboard এ monitor করতে পারেন:
+Monitor in Vercel Dashboard:
 
 - **Function Execution Time**
 - **Bandwidth Usage**
@@ -153,15 +166,15 @@ Vercel Dashboard এ monitor করতে পারেন:
 
 ## 📞 Support
 
-যদি কোন সমস্যা হয়:
+If you encounter issues:
 
-1. Vercel Function Logs check করুন
-2. Browser Console এ error দেখুন
-3. Network tab এ API responses check করুন
+1. Check Vercel Function Logs
+2. Check Browser Console for errors
+3. Check Network tab for API responses
 
 ## 🎉 Success!
 
-সফলভাবে deploy হলে আপনার Travel Agency Management System ready!
+Once successfully deployed, your Travel Agency Management System will be ready!
 
 **Features Available:**
 
