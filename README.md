@@ -89,7 +89,14 @@ All data is simulated in the frontend:
 
 To deploy this frontend-only application:
 1. Build the project: `npm run build`
-2. Deploy the `dist` folder to any static hosting service (Vercel, Netlify, GitHub Pages, etc.)
+2. Deploy the `dist/spa` folder to any static hosting service (Vercel, Netlify, GitHub Pages, etc.)
+
+### Vercel Deployment
+
+The project is now properly configured for Vercel deployment:
+- Fixed entry point issues
+- Correct build output directory (`dist/spa`)
+- Proper routing configuration in `vercel.json`
 
 ## 📞 Support
 
