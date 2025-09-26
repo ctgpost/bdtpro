@@ -61,6 +61,30 @@ import {
 } from "../components/ui/dialog";
 import { apiClient } from "../services/api";
 
+// Define the Booking interface to match the API response
+interface Booking {
+  id: string;
+  ticket_id: string;
+  customer_name: string;
+  customer_email?: string;
+  customer_phone?: string;
+  passport_number?: string;
+  country_code: string;
+  ticket_type: string;
+  departure_date: string;
+  return_date: string;
+  total_amount: number;
+  amount_paid: number;
+  status: string;
+  agent_id?: string;
+  agent_name?: string;
+  agent_email?: string;
+  agent_phone?: string;
+  notes?: string;
+  created_at: string;
+  updated_at: string;
+}
+
 const statusColors = {
   pending: "bg-yellow-100 text-yellow-800 border-yellow-200",
   confirmed: "bg-green-100 text-green-800 border-green-200",
@@ -78,6 +102,38 @@ const statusIcons = {
 const paymentColors = {
   full: "bg-green-100 text-green-800 border-green-200",
   partial: "bg-orange-100 text-orange-800 border-orange-200",
+};
+
+// Helper function to determine payment status
+const getPaymentStatus = (amountPaid: number, totalAmount: number): string => {
+  return amountPaid >= totalAmount ? "full" : "partial";
+};
+
+// Helper function to format currency
+const formatCurrency = (amount: number): string => {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "BDT",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(amount);
+};
+
+// Helper function to get country name by code
+const getCountryName = (code: string): string => {
+  const countries: Record<string, string> = {
+    SA: "Saudi Arabia",
+    AE: "United Arab Emirates",
+    TR: "Turkey",
+    MY: "Malaysia",
+    ID: "Indonesia",
+    KW: "Kuwait",
+    OM: "Oman",
+    BH: "Bahrain",
+    JO: "Jordan",
+    LB: "Lebanon",
+  };
+  return countries[code] || code;
 };
 
 export default function Bookings() {
@@ -533,17 +589,30 @@ export default function Bookings() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          className={`${
-                            paymentColors[
-                              (booking.amount_paid >= booking.total_amount ? "full" : "partial") as keyof typeof paymentColors
-                            ]
-                          } font-body`}
-                        >
-                          {booking.amount_paid >= booking.total_amount
-                            ? "Full Payment"
-                            : "Partial Payment"}
-                        </Badge>
+                        <div className="space-y-1">
+                          <Badge
+                            className={`${
+                              paymentColors[
+                                (booking.amount_paid >= booking.total_amount ? "full" : "partial") as keyof typeof paymentColors
+                              ]
+                            } font-body`}
+                          >
+                            {booking.amount_paid >= booking.total_amount
+                              ? "Full Payment"
+                              : "Partial Payment"}
+                          </Badge>
+                          <div className="text-xs text-foreground/70 font-body">
+                            {formatCurrency(booking.amount_paid)} / {formatCurrency(booking.total_amount)}
+                          </div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-sm font-body">
+                          <div>{getCountryName(booking.country_code)}</div>
+                          <div className="text-xs text-foreground/50">
+                            {new Date(booking.departure_date).toLocaleDateString()} - {new Date(booking.return_date).toLocaleDateString()}
+                          </div>
+                        </div>
                       </TableCell>
                       <TableCell className="text-sm text-foreground/70 font-body">
                         {new Date(booking.created_at).toLocaleDateString()}
@@ -572,7 +641,7 @@ export default function Bookings() {
                               </DialogHeader>
                               {selectedBooking && (
                                 <div className="space-y-4">
-                                  <div className="grid grid-cols-2 gap-4">
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="space-y-2">
                                       <h4 className="font-heading font-semibold">
                                         Passenger Information
@@ -603,19 +672,136 @@ export default function Bookings() {
                                       <div className="text-sm space-y-1 font-body">
                                         <p>
                                           <strong>Name:</strong>{" "}
-                                          {selectedBooking.agent_name}
+                                          {selectedBooking.agent_name || "N/A"}
                                         </p>
                                         <p>
                                           <strong>Phone:</strong>{" "}
-                                          {selectedBooking.agent_phone || selectedBooking.customer_phone}
+                                          {selectedBooking.agent_phone || selectedBooking.customer_phone || "N/A"}
                                         </p>
                                         <p>
                                           <strong>Email:</strong>{" "}
-                                          {selectedBooking.agent_email || selectedBooking.customer_email}
+                                          {selectedBooking.agent_email || selectedBooking.customer_email || "N/A"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <h4 className="font-heading font-semibold">
+                                        Booking Details
+                                      </h4>
+                                      <div className="text-sm space-y-1 font-body">
+                                        <p>
+                                          <strong>Booking ID:</strong>{" "}
+                                          {selectedBooking.id}
+                                        </p>
+                                        <p>
+                                          <strong>Ticket ID:</strong>{" "}
+                                          {selectedBooking.ticket_id}
+                                        </p>
+                                        <p>
+                                          <strong>Country:</strong>{" "}
+                                          {getCountryName(selectedBooking.country_code)}
+                                        </p>
+                                        <p>
+                                          <strong>Ticket Type:</strong>{" "}
+                                          {selectedBooking.ticket_type}
                                         </p>
                                       </div>
                                     </div>
                                   </div>
+
+                                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <Card className="border-0 bg-muted">
+                                      <CardContent className="p-4">
+                                        <h4 className="font-heading font-semibold mb-2">
+                                          Travel Dates
+                                        </h4>
+                                        <div className="text-sm space-y-1 font-body">
+                                          <p>
+                                            <strong>Departure:</strong>{" "}
+                                            {new Date(selectedBooking.departure_date).toLocaleDateString()}
+                                          </p>
+                                          <p>
+                                            <strong>Return:</strong>{" "}
+                                            {new Date(selectedBooking.return_date).toLocaleDateString()}
+                                          </p>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+                                    <Card className="border-0 bg-muted">
+                                      <CardContent className="p-4">
+                                        <h4 className="font-heading font-semibold mb-2">
+                                          Payment Information
+                                        </h4>
+                                        <div className="text-sm space-y-1 font-body">
+                                          <p>
+                                            <strong>Total Amount:</strong>{" "}
+                                            {formatCurrency(selectedBooking.total_amount)}
+                                          </p>
+                                          <p>
+                                            <strong>Amount Paid:</strong>{" "}
+                                            {formatCurrency(selectedBooking.amount_paid)}
+                                          </p>
+                                          <p>
+                                            <strong>Remaining:</strong>{" "}
+                                            {formatCurrency(selectedBooking.total_amount - selectedBooking.amount_paid)}
+                                          </p>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+                                    <Card className="border-0 bg-muted">
+                                      <CardContent className="p-4">
+                                        <h4 className="font-heading font-semibold mb-2">
+                                          Status Information
+                                        </h4>
+                                        <div className="text-sm space-y-1 font-body">
+                                          <p>
+                                            <strong>Status:</strong>{" "}
+                                            <Badge
+                                              className={`${
+                                                statusColors[
+                                                  selectedBooking.status as keyof typeof statusColors
+                                                ]
+                                              } flex items-center space-x-1 font-body w-fit`}
+                                            >
+                                              {
+                                                statusIcons[
+                                                  selectedBooking.status as keyof typeof statusIcons
+                                                ]
+                                              }
+                                              <span className="capitalize">{selectedBooking.status}</span>
+                                            </Badge>
+                                          </p>
+                                          <p>
+                                            <strong>Payment:</strong>{" "}
+                                            <Badge
+                                              className={`${
+                                                paymentColors[
+                                                  getPaymentStatus(selectedBooking.amount_paid, selectedBooking.total_amount) as keyof typeof paymentColors
+                                                ]
+                                              } font-body w-fit`}
+                                            >
+                                              {getPaymentStatus(selectedBooking.amount_paid, selectedBooking.total_amount) === "full"
+                                                ? "Full Payment"
+                                                : "Partial Payment"}
+                                            </Badge>
+                                          </p>
+                                        </div>
+                                      </CardContent>
+                                    </Card>
+                                  </div>
+
+                                  {selectedBooking.notes && (
+                                    <Card className="border-0 bg-muted">
+                                      <CardContent className="p-4">
+                                        <h4 className="font-heading font-semibold mb-2">
+                                          Notes
+                                        </h4>
+                                        <p className="text-sm font-body">
+                                          {selectedBooking.notes}
+                                        </p>
+                                      </CardContent>
+                                    </Card>
+                                  )}
 
                                   <div className="flex space-x-2">
                                     {hasPermission("confirm_bookings") &&
