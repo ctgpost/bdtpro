@@ -1,12 +1,15 @@
 {
   "version": 2,
+  "builds": [
+    {
+      "src": "dist/spa/index.html",
+      "use": "@vercel/static"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "/index.html"
+      "dest": "dist/spa/index.html"
     }
-  ],
-  "env": {
-    "NODE_ENV": "production"
-  }
+  ]
 }

@@ -189,6 +189,8 @@ const App = () => (
   </ErrorBoundary>
 );
 
+export default App;
+
 // Fix for React 18 StrictMode double root creation warning
 const container = document.getElementById("root")!;
 let root = (container as any)._reactRoot;

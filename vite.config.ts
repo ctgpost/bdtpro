@@ -14,7 +14,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist",
+    outDir: "dist/spa",
     // Performance optimizations
     target: "es2020",
     minify: "esbuild",
